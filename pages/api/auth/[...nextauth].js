@@ -33,6 +33,7 @@ export default NextAuth({
       if (account && user) {
         console.log(account.expires_at);
         return {
+          idToken: account.id_token,
           accessToken: account.access_token,
           accessTokenExpires: Date.now() + account.expires_at * 1000,
           refreshToken: account.refresh_token,
@@ -53,7 +54,7 @@ export default NextAuth({
       session.user = token.user;
       session.accessToken = token.accessToken;
       session.error = token.error;
-
+      session.idToken = token.idToken;
       return session;
     },
   },

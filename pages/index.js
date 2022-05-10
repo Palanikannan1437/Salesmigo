@@ -8,9 +8,28 @@ import styles from "../styles/Home.module.css";
 export default function Home() {
   const { data: session } = useSession();
   console.log(session);
-  const token = getToken({ req, secret });
-  console.log(token + "token!!!!");
+  
   const [isGoogleLoggedIn, setIsGoogleLoggedIn] = useState(false);
+  useEffect(() => {
+    if (session) {
+      fetch(`/api/get-token`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((response) => {
+          return response.json();
+        })
+        .then((d) => {
+          console.log(data + "google auth successful");
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, [session?.accessToken]);
+
   useEffect(() => {
     if (session) {
       fetch(`${process.env.NEXT_PUBLIC_SERVER}/users/login-google`, {
