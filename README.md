@@ -1,4 +1,4 @@
-Salesmigo project hosted on [`create-next-app`](https://salesmigo.vercel.app).
+Salesmigo project hosted on [`vercel`](https://salesmigo.vercel.app).
 
 ## Getting Started
 
