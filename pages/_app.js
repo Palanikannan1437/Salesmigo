@@ -1,4 +1,5 @@
 import "../styles/globals.css";
+import '../pages/error-page/errorpage.css'
 import { SessionProvider } from "next-auth/react";
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {

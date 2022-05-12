@@ -1,13 +1,13 @@
+import React, { useRef } from "react";
 import { Button, TextField } from "@mui/material";
 import { useRouter } from "next/router";
-import React, { useRef } from "react";
 
-const RegisterWorker = () => {
+const RegisterManager = () => {
   const router = useRouter();
   const inputNameRef = useRef();
   const inputEmailRef = useRef();
 
-  const registerWorkerHandler = (event) => {
+  const registerManagerHandler = (event) => {
     event.preventDefault();
     const enteredName = inputNameRef.current.value;
     const enteredEmail = inputEmailRef.current.value;
@@ -15,8 +15,8 @@ const RegisterWorker = () => {
       employee_name: enteredName,
       employee_email: enteredEmail,
     };
-    console.log("first", userData);
-    fetch(`${process.env.NEXT_PUBLIC_SERVER}/employees/worker`, {
+    
+    fetch(`${process.env.NEXT_PUBLIC_SERVER}/employees/manager`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(userData),
@@ -36,7 +36,7 @@ const RegisterWorker = () => {
   };
   return (
     <div>
-      <form onSubmit={registerWorkerHandler}>
+      <form onSubmit={registerManagerHandler}>
         <div>
           <TextField
             inputRef={inputNameRef}
@@ -59,4 +59,4 @@ const RegisterWorker = () => {
   );
 };
 
-export default RegisterWorker;
+export default RegisterManager;
