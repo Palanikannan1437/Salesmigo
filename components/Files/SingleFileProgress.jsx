@@ -5,7 +5,6 @@ import FileHeader from "./FileHeader";
 const fileUpload = (file, onProgress) => {
   const url = "https://api.cloudinary.com/v1_1/demo/image/upload";
   const key = "docs_upload_example_us_preset";
-
   return new Promise((res, rej) => {
     const xhr = new XMLHttpRequest();
     xhr.open("POST", url);
@@ -31,11 +30,12 @@ const fileUpload = (file, onProgress) => {
 
 const SingleFileProgress = (props) => {
   const [progress, setProgress] = useState(0);
+
   useEffect(() => {
     const upload = async () => {
       try {
         const url = await fileUpload(props.file, setProgress);
-        console.log(url,"asasfad;lfjaflasjfl;sajdfl;adjf");
+        console.log(url);
         props.onUpload(props.file, url);
       } catch (error) {
         console.log(error);
@@ -43,7 +43,6 @@ const SingleFileProgress = (props) => {
     };
     upload();
   }, []);
-
   return (
     <div>
       <Box sx={{ display: "flex", alignItems: "center" }}>
