@@ -1,7 +1,7 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { signIn, signOut, useSession } from "next-auth/react";
-import { setCookies } from "cookies-next";
+import { getCookie } from "cookies-next";
 
 const Login = () => {
   const { data: session } = useSession();
@@ -17,15 +17,20 @@ const Login = () => {
         }),
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${getCookie("google-jwt")}`,
         },
+        credentials: "include",
       })
         .then((response) => {
+          if (response.status === 404 || response.status === 500) {
+            // router.push(`/error-page/${response.status}`);
+          }
           return response.json();
         })
         .then((data) => {
+          console.log(data);
           if (data.status === "Login Successful") {
             setIsGoogleLoggedIn(true);
-            setCookies("google-verified-jwtToken", data.googleToken);
           }
         })
         .catch((err) => {
@@ -34,12 +39,12 @@ const Login = () => {
     }
   }, [session?.accessToken]);
 
-  useEffect(() => {
-    if (session?.error === "RefreshAccessTokenError") {
-      signIn();
-    }
-  }, [session]);
-
+  // useEffect(() => {
+  //   if (session?.error === "RefreshAccessTokenError") {
+  //     signIn();
+  //   }
+  // }, [session]);
+  
   if (isGoogleLoggedIn) {
     return (
       <>

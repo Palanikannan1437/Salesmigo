@@ -31,21 +31,22 @@ export default NextAuth({
     async jwt({ token, user, account }) {
       // Initial sign in
       if (account && user) {
-        console.log(account.expires_at);
+        console.log("acc expires at", account.expires_at.toLocaleString);
         return {
           idToken: account.id_token,
           accessToken: account.access_token,
-          accessTokenExpires: Date.now() + account.expires_at * 1000,
+          accessTokenExpires: Date.now() + account.expires_at * 3600,
           refreshToken: account.refresh_token,
           user,
         };
       }
-
       // Return previous token if the access token has not expired yet
+
       if (Date.now() < token.accessTokenExpires) {
+        console.log("token not refreshed", token.accessTokenExpires);
+        console.log(token.accessTokenExpires - Date.now());
         return token;
       }
-      console.log(Date.now(), token.accessTokenExpires);
       console.log("refresh token wanted");
       // Access token has expired, try to update it
       return refreshAccessToken(token);
@@ -87,6 +88,7 @@ async function refreshAccessToken(token) {
 
     return {
       ...token,
+      idToken: refreshedTokens.idToken,
       accessToken: refreshedTokens.access_token,
       accessTokenExpires: Date.now() + refreshedTokens.expires_at * 1000,
       refreshToken: refreshedTokens.refresh_token ?? token.refreshToken, // Fall back to old refresh token
