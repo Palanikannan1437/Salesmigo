@@ -1,8 +1,8 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import SingleFileProgress from "./SingleFileProgress";
 
-const FileUpload = () => {
+const FileUpload = (props) => {
   const [files, setFiles] = useState([]);
 
   const onDrop = useCallback((accFiles, rejFiles) => {
@@ -23,31 +23,35 @@ const FileUpload = () => {
     );
   };
 
+  useEffect(() => {
+    props.updateFilesToSend(files);
+  }, [files]);
+
   const onDelete = (file) => {
     setFiles((currFiles) => currFiles.filter((fw) => fw.file !== file));
   };
 
   return (
-    <div {...getRootProps()} style={{ color: "black" }}>
-      <input {...getInputProps()} />
+    <div
+      {...getRootProps()}
+      style={{ color: "black", border: "solid", margin: "100px" }}
+    >
+      <input
+        {...getInputProps()}
+        // style={{ color: "black", border: "solid", margin: "100px" }}
+      />
 
-      <p>Drag 'n' drop some files here, or click to select files</p>
-
-      {JSON.stringify(files)}
+      <p>Upload Photos of Customer By Dragging photos to here</p>
 
       {files.map((fileWrapper, indx) => {
-        if (fileWrapper.status === "uploaded") {
-          return null;
-        } else {
-          return (
-            <SingleFileProgress
-              onDelete={onDelete}
-              onUpload={onUpload}
-              file={fileWrapper.file}
-              key={indx}
-            />
-          );
-        }
+        return (
+          <SingleFileProgress
+            onDelete={onDelete}
+            onUpload={onUpload}
+            file={fileWrapper.file}
+            key={indx}
+          />
+        );
       })}
     </div>
   );

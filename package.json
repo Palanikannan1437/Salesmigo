@@ -11,13 +11,16 @@
   "dependencies": {
     "@emotion/react": "^11.9.0",
     "@emotion/styled": "^11.8.1",
+    "@mui/lab": "^5.0.0-alpha.81",
     "@mui/material": "^5.7.0",
     "cookies-next": "^2.0.4",
+    "date-fns": "^2.28.0",
     "next": "12.1.6",
     "next-auth": "^4.3.4",
     "react": "18.1.0",
     "react-dom": "18.1.0",
-    "react-dropzone": "^14.2.1"
+    "react-dropzone": "^14.2.1",
+    "react-phone-number-input": "^3.1.52"
   },
   "devDependencies": {
     "eslint": "8.15.0",
