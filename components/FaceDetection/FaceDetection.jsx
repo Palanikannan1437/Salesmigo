@@ -1,4 +1,5 @@
-import * as faceapi from "face-api.js";
+import { getCookie } from "cookies-next";
+import * as faceapi from "@vladmandic/face-api";
 import React, { useEffect, useRef, useState } from "react";
 import { euclideanDistance } from "../../utils/euclideanDistance";
 
@@ -17,12 +18,12 @@ function FaceDetection() {
 
   useEffect(() => {
     const loadModels = async () => {
-      Promise.all([
-        faceapi.nets.ssdMobilenetv1.loadFromUri("/models"),
-        faceapi.nets.faceLandmark68Net.loadFromUri("/models"),
-        faceapi.nets.faceRecognitionNet.loadFromUri("/models"),
-        faceapi.nets.faceExpressionNet.loadFromUri("/models"),
-      ]).then(setIsLoaded(true));
+      await faceapi.nets.ssdMobilenetv1.loadFromUri("/models");
+      await faceapi.nets.faceLandmark68Net.loadFromUri("/models");
+      await faceapi.nets.faceRecognitionNet.loadFromUri("/models");
+      await faceapi.nets.faceExpressionNet.loadFromUri("/models");
+      await faceapi.nets.ageGenderNet.loadFromUri("/models");
+      setIsLoaded(true);
     };
     loadModels();
   }, []);
@@ -43,12 +44,18 @@ function FaceDetection() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (canvasRef && canvasRef.current && webcamRef && webcamRef.current) {
+      if (
+        isLoaded &&
+        canvasRef &&
+        canvasRef.current &&
+        webcamRef &&
+        webcamRef.current
+      ) {
         handleVideoOnPlay();
       }
-    }, 1500);
+    }, 100);
     return () => clearInterval(interval);
-  }, []);
+  }, [isLoaded]);
 
   const handleVideoOnPlay = async () => {
     try {
@@ -65,7 +72,8 @@ function FaceDetection() {
         .detectAllFaces(webcamRef.current, new faceapi.SsdMobilenetv1Options())
         .withFaceLandmarks()
         .withFaceDescriptors()
-        .withFaceExpressions();
+        .withFaceExpressions()
+        .withAgeAndGender();
 
       setDetectionDescripter(detections[0].descriptor);
       setDetection(detections);
@@ -82,7 +90,6 @@ function FaceDetection() {
       canvasRef &&
         canvasRef.current &&
         faceapi.draw.drawFaceExpressions(canvasRef.current, resizedDetections);
-      canvasRef && canvasRef.current && faceapi.draw.DrawTextField(name);
     } catch (err) {
       console.log("error is:", err);
     }
@@ -104,11 +111,15 @@ function FaceDetection() {
 
     prevDetection.current = detectionDescriptor;
   }, [detectionDescriptor, firstReqSent]);
-
+  console.log(euclideanDistance(detectionDescriptor, prevDetection.current));
+  console.log(detectionDescriptor);
   const compareFaces = (detectionDescriptor) => {
     fetch(`${process.env.NEXT_PUBLIC_SERVER}/customers/customer/find`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getCookie("google-jwt")}`,
+      },
       body: JSON.stringify({ descriptor: detectionDescriptor }),
     })
       .then((response) => {
@@ -128,7 +139,7 @@ function FaceDetection() {
     webcamRef.current.srcObject.getTracks()[0].stop();
     setCaptureVideo(false);
   };
-
+  console.log(isLoaded);
   return (
     <div>
       {isLoaded ? (

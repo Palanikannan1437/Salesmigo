@@ -15,10 +15,13 @@ const RegisterManager = () => {
       employee_name: enteredName,
       employee_email: enteredEmail,
     };
-    
+
     fetch(`${process.env.NEXT_PUBLIC_SERVER}/employees/manager`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getCookie("google-jwt")}`,
+      },
       body: JSON.stringify(userData),
     })
       .then((response) => {

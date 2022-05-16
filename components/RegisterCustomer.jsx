@@ -31,7 +31,10 @@ const RegisterCustomer = (props) => {
 
     fetch(`${process.env.NEXT_PUBLIC_SERVER}/customers/customer`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getCookie("google-jwt")}`,
+      },
       body: JSON.stringify(customerData),
     })
       .then((response) => {
