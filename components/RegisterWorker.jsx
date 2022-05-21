@@ -15,7 +15,6 @@ const RegisterWorker = () => {
       employee_name: enteredName,
       employee_email: enteredEmail,
     };
-    console.log("first", userData);
     fetch(`${process.env.NEXT_PUBLIC_SERVER}/employees/worker`, {
       method: "POST",
       headers: {

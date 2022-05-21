@@ -35,7 +35,7 @@ export default NextAuth({
         return {
           idToken: account.id_token,
           accessToken: account.access_token,
-          accessTokenExpires: Date.now() + account.expires_at * 3600,
+          accessTokenExpires: Date.now() + account.expires_at * 9999999999,
           refreshToken: account.refresh_token,
           user,
         };
