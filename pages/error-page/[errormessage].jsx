@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import Error from "../../components/HelperPages/Error";
+import Error from "../../components/HelperComponents/Error";
 
 const ErrorPage = () => {
   const router = useRouter();

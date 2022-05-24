@@ -3,7 +3,7 @@ import * as faceapi from "@vladmandic/face-api";
 import React, { useEffect, useRef, useState } from "react";
 import { euclideanDistance } from "../../utils/euclideanDistance";
 
-function FaceDetection() {
+function FaceDetection(props) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [captureVideo, setCaptureVideo] = useState(false);
   const [firstReqSent, setfirstReqSent] = useState(false);
@@ -111,10 +111,9 @@ function FaceDetection() {
 
     prevDetection.current = detectionDescriptor;
   }, [detectionDescriptor, firstReqSent]);
-  console.log(euclideanDistance(detectionDescriptor, prevDetection.current));
-  console.log(detectionDescriptor);
+
   const compareFaces = (detectionDescriptor) => {
-    fetch(`${process.env.NEXT_PUBLIC_SERVER}/customers/customer/find`, {
+    fetch(`${process.env.NEXT_PUBLIC_SERVER}/customers/customer/find1`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -126,8 +125,10 @@ function FaceDetection() {
         return response.json();
       })
       .then((userData) => {
-        console.log("userData", userData.customer._label);
         setName(userData.customer._label);
+        if (userData.customer._distance < 0.45) {
+          props.socket.emit("customer", userData.customer._label);
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -139,7 +140,7 @@ function FaceDetection() {
     webcamRef.current.srcObject.getTracks()[0].stop();
     setCaptureVideo(false);
   };
-  console.log(isLoaded);
+
   return (
     <div>
       {isLoaded ? (
