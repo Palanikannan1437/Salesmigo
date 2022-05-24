@@ -12,12 +12,18 @@ export default function BasicSection({
   overTitle,
   reversed,
   children,
+  angle,
 }) {
   return (
     <BasicSectionWrapper reversed={reversed}>
-      <ImageContainer>
-        <Image src={imageUrl} alt={title} layout="fill" objectFit="cover" />
+      <ImageContainer
+        style={{
+          transform: `rotate(${angle}deg)`,
+        }}
+      >
+        <Image src={imageUrl} alt={title} width={600} height={400} />
       </ImageContainer>
+
       <ContentContainer>
         <CustomOverTitle>{overTitle}</CustomOverTitle>
         <Title>{title}</Title>
@@ -46,13 +52,14 @@ const CustomOverTitle = styled(OverTitle)`
 
 const ImageContainer = styled.div`
   flex: 1;
-
+  border-radius: 15px;
+  overflow: hidden;
   position: relative;
   &:before {
     display: block;
     content: "";
     width: 100%;
-    padding-top: calc((9 / 16) * 100%);
+    /* padding-top: calc((9 / 16) * 100%); */
   }
 
   & > div {

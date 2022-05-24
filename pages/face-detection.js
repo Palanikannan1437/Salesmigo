@@ -62,7 +62,7 @@ const CustomerRecognitionPage = (props) => {
   }, [socket]);
 
   const emit = () => {
-    socket.emit("customer", "palanikannan m_pk@gmail.com");
+    socket.emit("customer", `palanikannan m_pk@gmail.com${Math.random()}`);
     console.log("emitted");
   };
 

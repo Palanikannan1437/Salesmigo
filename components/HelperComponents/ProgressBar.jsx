@@ -2,8 +2,6 @@ import { Box, LinearProgress } from "@mui/material";
 import Image from "next/image";
 import React from "react";
 import salesmigoLogo from "../../public/salesmigo_logo.png";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 
 const ProgressBar = ({ open }) => {
@@ -26,7 +24,8 @@ const ProgressBar = ({ open }) => {
             zIndex: 2,
             margin: "0 auto",
             width: "100vw",
-            height: "75vh",
+            height: "100vh",
+            border: "0px",
           }}
         >
           <div
@@ -50,7 +49,7 @@ const ProgressBar = ({ open }) => {
             >
               <LinearProgress
                 sx={{
-                  backgroundColor: `#263238`,
+                  backgroundColor: `rgb(22,115,255)`,
                   "& .MuiLinearProgress-bar": {
                     backgroundColor: `white`,
                   },

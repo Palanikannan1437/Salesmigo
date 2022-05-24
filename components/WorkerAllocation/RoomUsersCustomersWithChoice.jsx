@@ -1,13 +1,7 @@
-import { Paper, Stack } from "@mui/material";
+import { Avatar, Paper, Stack, Tooltip } from "@mui/material";
 import React from "react";
-import CustomerBoardBox from "./CustomerBoardBox";
 
-const RoomUsersCustomer = ({
-  roomUsers,
-  isCustomer,
-  removeWorkerAndCustomer,
-  isDroppable,
-}) => {
+const RoomUsersCustomerWithChoice = ({ roomUsers, isCustomer }) => {
   return (
     <div>
       <Paper style={{ maxHeight: "80vh", overflow: "auto", width: 85 }}>
@@ -15,14 +9,19 @@ const RoomUsersCustomer = ({
           {roomUsers?.map((user, index) => {
             if (isCustomer && user.username) {
               return (
-                <CustomerBoardBox
-                  isDroppable={isDroppable}
-                  name={user.username}
-                  color={stringToColor(user.username)}
-                  id={index}
-                  key={index}
-                  removeWorkerAndCustomer={removeWorkerAndCustomer}
-                />
+                <Tooltip title={user.username}>
+                  <Avatar
+                    sx={{
+                      bgcolor: stringToColor(user.username),
+                      width: 80,
+                      height: 80,
+                      fontSize: 40,
+                    }}
+                    src={"/customer.png"}
+                    alt={user.username}
+                    variant="square"
+                  />
+                </Tooltip>
               );
             }
           })}
@@ -51,4 +50,4 @@ function stringToColor(string) {
   return color;
 }
 
-export default RoomUsersCustomer;
+export default RoomUsersCustomerWithChoice;

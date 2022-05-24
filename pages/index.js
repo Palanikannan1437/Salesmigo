@@ -9,6 +9,7 @@ import Hero from "../views/HomePage/Hero";
 import Partners from "../views/HomePage/Partners";
 import Head from "next/head";
 import Link from "next/link";
+import SectionTitle from "../components/PageStructureComponents/SectionTitle";
 
 export default function Home(props) {
   const { data: session } = useSession();
@@ -23,56 +24,54 @@ export default function Home(props) {
         <WhiteBackgroundContainer>
           <Hero />
           <Partners />
+          <SectionTitle>How will the workflow be like?</SectionTitle>
+
           <BasicSection
-            imageUrl="/demo-illustration-1.svg"
-            title="Lorem ipsum dolor sit amet consectetur."
-            overTitle="sit amet gogo"
+            imageUrl="/mainIllustration.jpg"
+            title="Customer enters your Store"
+            overTitle="Step 1"
+            angle={0}
           >
             <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas,
-              quidem error incidunt a doloremque voluptatem porro inventore
-              voluptate quo deleniti animi laboriosam.{" "}
-              <Link href="/help-center">
-                Possimus ullam velit rem itaque consectetur, in distinctio?
-              </Link>{" "}
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Soluta
-              repellendus quia quos obcaecati nihil. Laudantium non accusantium,
-              voluptate eum nesciunt at suscipit quis est soluta?
+              As soon as customers enter, the camera recognizes them from the
+              existing customer database with little to no delay at all,
+              regardless of the size of the customer base. If they are
+              first-time customers, they can easily register themselves with the
+              camera, and their entry is automatically recorded. The recognition
+              and recording process is done with minimized effort and
+              expenditure from your side, allowing for smooth and effective
+              translation.
             </p>
           </BasicSection>
           <BasicSection
-            imageUrl="/demo-illustration-2.svg"
-            title="Lorem ipsum dolor sit."
-            overTitle="lorem ipsum"
+            imageUrl="/mainIllustration1.jpg"
+            title="The store manager gets customers' data"
+            overTitle="Step 2"
             reversed
+            angle={0}
           >
-            <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas,
-              quidem error incidunt a doloremque voluptatem porro inventore{" "}
-              <strong>voluptate quo deleniti animi laboriosam</strong>. Possimus
-              ullam velit rem itaque consectetur, in distinctio?
-            </p>
-            <ul>
-              <li>Professional point 1</li>
-              <li>Professional remark 2</li>
-              <li>Professional feature 3</li>
-            </ul>
+            While the customers enter and are recognized in real-time, their
+            information is immediately transferred to the manager, who can then
+            easily allocate and assign available workers to those corresponding
+            customers with negligible effort through this platform all in real
+            time. This negates any hindrances in providing assistance to the
+            customers, as the platform can easily handle and organize that.
           </BasicSection>
           <BasicSection
-            imageUrl="/demo-illustration-1.svg"
-            title="Lorem ipsum dolor sit amet consectetur."
-            overTitle="sit amet gogo"
+            imageUrl="/mainIllustration2.jpg"
+            title="Your workers can now cater the customers"
+            overTitle="Step 3"
+            angle={0}
           >
             <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas,
-              quidem error incidunt a doloremque voluptatem porro inventore
-              voluptate quo deleniti animi laboriosam.{" "}
-              <Link href="/help-center">
-                Possimus ullam velit rem itaque consectetur, in distinctio?
-              </Link>{" "}
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Soluta
-              repellendus quia quos obcaecati nihil. Laudantium non accusantium,
-              voluptate eum nesciunt at suscipit quis est soluta?
+              The workers, who are instantly equipped with the details of their
+              assigned customers like recommended purchases based on previous
+              shopping experience,bill history,location and much more and can
+              cater to them with utmost accuracy, precision and efficiency,
+              based on what they require. This ensures that the customers
+              receive uninterrupted, customized, and instantaneous support to
+              make their shopping trip proceed with complete ease and
+              comfortability.
             </p>
           </BasicSection>
         </WhiteBackgroundContainer>

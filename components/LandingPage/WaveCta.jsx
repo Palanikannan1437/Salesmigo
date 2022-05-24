@@ -27,9 +27,12 @@ export default function WaveCta() {
             delectus?
           </Title>
           <CustomButtonGroup>
-            <Button>
-              Check out our workflow <span>&rarr;</span>
-            </Button>
+            <NextLink href="/workflow" passHref>
+              <Button>
+                Check out our workflow <span>&rarr;</span>
+              </Button>
+            </NextLink>
+
             <NextLink href="/features" passHref>
               <OutlinedButton transparent>
                 Features <span>&rarr;</span>

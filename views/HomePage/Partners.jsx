@@ -41,8 +41,8 @@ function Partners() {
         }}
         className="swiper-wrapper"
       >
-        {PARTNER_LOGOS.map((logo) => (
-          <SwiperSlide key={logo}>
+        {PARTNER_LOGOS.map((logo, idx) => (
+          <SwiperSlide key={logo + idx}>
             <NextImage
               src={"/partners/" + logo}
               alt={normalizePartnerLogoName(logo)}

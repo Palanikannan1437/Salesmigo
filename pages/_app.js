@@ -1,4 +1,4 @@
-import { getSession, SessionProvider } from "next-auth/react";
+import { getSession, SessionProvider, signOut } from "next-auth/react";
 import { socket, SocketContext } from "../utils/socket";
 import { AuthContextProvider } from "../store/auth-context";
 import GlobalStyles from "../components/GlobalStyles";
@@ -10,14 +10,17 @@ import { GeneralModalContextProvider } from "../store/modal-context";
 import "../styles/globals.css";
 import WaveCta from "../components/LandingPage/WaveCta";
 import Footer from "../components/LandingPage/Footer";
+import { useRouter } from "next/router";
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
+  const router = useRouter();
   const [navItems, setNavItems] = useState([
-    { title: "Awesome SaaS Features", href: "/features" },
+    { title: "Features", href: "/features" },
     { title: "Pricing", href: "/pricing" },
     { title: "Contact", href: "/contact" },
     { title: "Sign In", href: "/sign-up", outlined: true },
   ]);
+
   const [globalSession, setglobalSession] = useState(null);
 
   const handleNavItems = (id, text, isSignedIn) => {
@@ -62,6 +65,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
         .then((response) => {
           if (response.status === 404 || response.status === 500) {
             // router.push(`/error-page/${response.status}`);
+            setIsGoogleLoggedIn(false);
             signOut();
           }
           return response.json();
@@ -80,6 +84,8 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
         });
     }
   }, [globalSession]);
+
+  console.log("in app", isGoogleLoggedIn);
 
   return (
     <>

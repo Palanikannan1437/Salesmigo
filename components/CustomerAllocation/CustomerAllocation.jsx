@@ -35,9 +35,11 @@ const CustomerAllocation = ({ socket }) => {
 
   //allocating customers to a worker
   const removeWorkerAndCustomer = (customerId, workerId) => {
+    console.log(customerId, workerId, "removing indexes");
     setRoomData((prevRoomData) => {
       prevRoomData.users.forEach((worker, index) => {
-        if (index !== workerId) {
+        if (index === workerId) {
+          console.log(worker, "removed worker");
           worker.status = "Occupied";
           setAllocatedWorker(worker);
         }
@@ -47,14 +49,15 @@ const CustomerAllocation = ({ socket }) => {
     setCustomerRoomData((prevCustomerRoomData) =>
       prevCustomerRoomData.filter((customer, index) => {
         console.log(customer);
-        if (index !== customerId) {
+        if (index === customerId) {
+          console.log(customer, "removed customer");
           setAllocatedCustomer(customer);
         }
         return index !== customerId;
       })
     );
   };
-
+  console.log(customerRoomData, "room data of customers");
   //emitting an event when customer is allocated a worker
   useEffect(() => {
     console.log(allocatedWorker, allocatedCustomer, "allocated cust and work");
@@ -117,6 +120,7 @@ const CustomerAllocation = ({ socket }) => {
             roomUsers={customerRoomData}
             isCustomer={true}
             removeWorkerAndCustomer={removeWorkerAndCustomer}
+            isDroppable="yes"
           />
           <p>Available Workers</p>
           <RoomUsers roomUsers={roomData.users} />

@@ -4,8 +4,9 @@ import { useDrop } from "react-dnd";
 
 const CustomerBoardBox = (props) => {
   const [{ isOver, canDrop }, drop] = useDrop(() => ({
-    accept: "yes",
+    accept: props.isDroppable,
     drop: (item) => {
+      console.log(props.id, item.id, "dropped");
       props.removeWorkerAndCustomer(props.id, item.id);
     },
     collect: (monitor) => ({
