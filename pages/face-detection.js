@@ -2,11 +2,9 @@ import { getCookie } from "cookies-next";
 import { useSession } from "next-auth/react";
 import React, { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import CustomerAllocation from "../components/CustomerAllocation/CustomerAllocation";
 import FaceDetection from "../components/FaceDetection/FaceDetection";
-import AuthContext from "../components/store/auth-context";
+import AuthContext from "../store/auth-context";
 import { SocketContext } from "../utils/socket";
-import CustomerAllocatorPage from "./customer-allocator";
 
 const CustomerRecognitionPage = (props) => {
   const { data: session } = useSession();

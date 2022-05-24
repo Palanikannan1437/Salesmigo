@@ -1,6 +1,6 @@
 import React from "react";
 import { ToastContainer } from "react-toastify";
-import ProgressBar from "../components/HelperPages/ProgressBar";
+import ProgressBar from "../components/HelperComponents/ProgressBar";
 import RoomUsers from "../components/RoomUsers";
 import WorkerAllocation from "../components/WorkerAllocation/WorkerAllocation";
 
