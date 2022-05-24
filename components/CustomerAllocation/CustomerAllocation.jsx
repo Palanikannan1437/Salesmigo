@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react";
 
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import AuthContext from "../store/auth-context";
+import AuthContext from "../../store/auth-context";
 import RoomUsersCustomer from "../RoomUsersCustomers";
 import RoomUsers from "../RoomUsers";
 import OccupiedWorkers from "../OccupiedWorkers";

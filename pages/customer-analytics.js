@@ -1,5 +1,5 @@
 import { useSession } from "next-auth/react";
-import React from "react";
+import React, { useEffect } from "react";
 import DashBoard from "../components/DashBoard";
 
 const CustomerAnalyticsPage = () => {
