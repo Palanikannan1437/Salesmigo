@@ -8,14 +8,8 @@ import { SocketContext } from "../utils/socket";
 
 const CustomerAllocatorPage = (props) => {
   const { data: session } = useSession();
-
+  console.log(session);
   const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    if (session) {
-      props.handleNavItems(3, "SIGN OUT", true);
-    }
-  }, [session]);
 
   const socket = useContext(SocketContext);
   const [socketStatus, setSocketStatus] = useState(false);
@@ -36,9 +30,9 @@ const CustomerAllocatorPage = (props) => {
     return () => {
       socket.off("connect", socketConnected);
       socket.off("disconnect", socketDisconnected);
-      // setTimeout(() => {
-      //   socket.disconnect();
-      // }, 100);
+      setTimeout(() => {
+        socket.disconnect();
+      }, 1000);
     };
   }, [socket]);
 

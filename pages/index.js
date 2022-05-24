@@ -12,12 +12,6 @@ import Link from "next/link";
 
 export default function Home(props) {
   const { data: session } = useSession();
-  console.log(props);
-  useEffect(() => {
-    if (session) {
-      props.handleNavItems(3, "SIGN OUT", true);
-    }
-  }, [session]);
 
   return (
     <>
@@ -25,11 +19,10 @@ export default function Home(props) {
         <title>Salesamigo</title>
         <meta name="description" content="Improve sales using face detection" />
       </Head>
-      <Login />
       <HomepageWrapper>
         <WhiteBackgroundContainer>
           <Hero />
-          {/* <Partners /> */}
+          <Partners />
           <BasicSection
             imageUrl="/demo-illustration-1.svg"
             title="Lorem ipsum dolor sit amet consectetur."
@@ -64,6 +57,23 @@ export default function Home(props) {
               <li>Professional remark 2</li>
               <li>Professional feature 3</li>
             </ul>
+          </BasicSection>
+          <BasicSection
+            imageUrl="/demo-illustration-1.svg"
+            title="Lorem ipsum dolor sit amet consectetur."
+            overTitle="sit amet gogo"
+          >
+            <p>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas,
+              quidem error incidunt a doloremque voluptatem porro inventore
+              voluptate quo deleniti animi laboriosam.{" "}
+              <Link href="/help-center">
+                Possimus ullam velit rem itaque consectetur, in distinctio?
+              </Link>{" "}
+              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Soluta
+              repellendus quia quos obcaecati nihil. Laudantium non accusantium,
+              voluptate eum nesciunt at suscipit quis est soluta?
+            </p>
           </BasicSection>
         </WhiteBackgroundContainer>
         <DarkerBackgroundContainer>

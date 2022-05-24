@@ -19,7 +19,7 @@ import Logo from "../IconComponents/Logo";
 import AuthContext from "../../store/auth-context";
 import { removeCookies } from "cookies-next";
 
-export default function Navbar({ items }) {
+export default function Navbar({ items, isGoogleLoggedIn }) {
   const router = useRouter();
   const { toggle } = Drawer.useDrawer();
   const authCtx = useContext(AuthContext);
@@ -82,7 +82,11 @@ export default function Navbar({ items }) {
         </NextLink>
         <NavItemList>
           {items.map((singleItem) => (
-            <NavItem key={singleItem.href} {...singleItem} />
+            <NavItem
+              key={singleItem.href}
+              {...singleItem}
+              isGoogleLoggedIn={isGoogleLoggedIn}
+            />
           ))}
         </NavItemList>
 
@@ -102,11 +106,10 @@ const signOutEntirely = () => {
   });
 };
 
-function NavItem({ href, title, outlined, isSignedIn }) {
+function NavItem({ href, title, outlined, isGoogleLoggedIn }) {
   if (outlined) {
-    console.log("state of sign in", isSignedIn);
     return (
-      <CustomButton onClick={isSignedIn ? signOutEntirely : signIn}>
+      <CustomButton onClick={isGoogleLoggedIn ? signOutEntirely : signIn}>
         {title}
       </CustomButton>
     );

@@ -11,12 +11,6 @@ const WorkerAllocationsPage = () => {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    if (session) {
-      props.handleNavItems(3, "SIGN OUT", true);
-    }
-  }, [session]);
-
   const [roomData, setRoomData] = useState({
     users: [
       { id: "", username: "", room: "", email: "", photoUrl: "", type: "" },
@@ -58,7 +52,7 @@ const WorkerAllocationsPage = () => {
 
     const foundUser = (data) => {
       toast(data);
-      console.log("customer found data",data)
+      console.log("customer found data", data);
       // setRoomDataCustomers(..)
     };
 
