@@ -4,7 +4,6 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { Button } from "@mui/material";
-// import "./mystlyes.css";
 import PhoneInput from "react-phone-number-input";
 
 const RegisterCustomer = (props) => {
@@ -14,7 +13,6 @@ const RegisterCustomer = (props) => {
 
   const [dateOfBirth, setDateOfBirth] = useState(null);
   const [phoneNumber, setPhoneNumber] = useState(null);
-  console.log("in register customer,files: ", props.filesToUpload);
 
   const registerCustomerHandler = (event) => {
     event.preventDefault();
