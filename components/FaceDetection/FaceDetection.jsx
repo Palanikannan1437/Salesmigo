@@ -1,8 +1,7 @@
 import { getCookie } from "cookies-next";
 import * as faceapi from "@vladmandic/face-api";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { euclideanDistance } from "../../utils/euclideanDistance";
-import { toast, ToastContainer } from "react-toastify";
 
 function FaceDetection(props) {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -58,7 +57,6 @@ function FaceDetection(props) {
     return () => clearInterval(interval);
   }, [isLoaded]);
 
-  console.log(isLoaded);
   const handleVideoOnPlay = async () => {
     try {
       canvasRef.current.innerHTML = faceapi.createCanvasFromMedia(
@@ -128,7 +126,9 @@ function FaceDetection(props) {
       })
       .then((userData) => {
         setName(userData.customer._label);
-        props.socket.emit("customer", userData.customer._label);
+        if (userData.customer._distance < 0.45) {
+          props.socket.emit("customer", userData.customer._label);
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -143,7 +143,6 @@ function FaceDetection(props) {
 
   return (
     <div>
-      <ToastContainer />
       {isLoaded ? (
         <div style={{ textAlign: "center", padding: "10px" }}>
           {captureVideo ? (

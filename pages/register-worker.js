@@ -5,6 +5,12 @@ import RegisterWorker from "../components/RegisterWorker";
 
 export default function Home() {
   const { data: session } = useSession();
+  useEffect(() => {
+    if (session) {
+      props.handleNavItems(3, "SIGN OUT", true);
+    }
+  }, [session]);
+
   console.log(session);
   if (session) {
     return (

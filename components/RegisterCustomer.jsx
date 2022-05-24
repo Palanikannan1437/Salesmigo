@@ -5,6 +5,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { Button } from "@mui/material";
 import PhoneInput from "react-phone-number-input";
+import { getCookie } from "cookies-next";
 
 const RegisterCustomer = (props) => {
   const inputNameRef = useRef();

@@ -8,7 +8,7 @@ import AuthContext from "../components/store/auth-context";
 import { SocketContext } from "../utils/socket";
 import CustomerAllocatorPage from "./customer-allocator";
 
-const CustomerRecognitionPage = () => {
+const CustomerRecognitionPage = (props) => {
   const { data: session } = useSession();
   const [socketId, setSocketId] = useState("");
   const socket = useContext(SocketContext);
@@ -16,7 +16,11 @@ const CustomerRecognitionPage = () => {
 
   const [roomData, setRoomData] = useState();
 
-  console.log(socket);
+  useEffect(() => {
+    if (session) {
+      props.handleNavItems(3, "SIGN OUT", true);
+    }
+  }, [session]);
 
   useEffect(() => {
     socket.on("connect", () => {
@@ -47,6 +51,7 @@ const CustomerRecognitionPage = () => {
         email: session?.user.email,
         type: authCtx.designation,
         teamID: authCtx.teamID,
+        photoUrl: session?.user.image,
       });
     }
   };
@@ -64,11 +69,18 @@ const CustomerRecognitionPage = () => {
     };
   }, [socket]);
 
+  const emit = () => {
+    socket.emit("customer", "palanikannan m_pk@gmail.com");
+    console.log("emitted");
+  };
+
   if (session) {
     return (
       <>
         <h1 style={{ color: "black" }}>My socket id is: {socketId}</h1>
         <button onClick={sendUserData}>Join Room</button>
+        <button onClick={emit}>Emit</button>
+
         <FaceDetection socket={socket} />
       </>
     );

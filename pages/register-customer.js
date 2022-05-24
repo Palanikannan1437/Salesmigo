@@ -3,14 +3,18 @@ import React, { useEffect, useState } from "react";
 import FileUpload from "../components/Files/FileUpload";
 import RegisterCustomer from "../components/RegisterCustomer";
 
-const RegisterCustomerPage = () => {
+const RegisterCustomerPage = (props) => {
   const [filesToUpload, setFilesToUpload] = useState([]);
+  const { data: session } = useSession();
+  useEffect(() => {
+    if (session) {
+      props.handleNavItems(3, "SIGN OUT", true);
+    }
+  }, [session]);
 
   const updateFileToSend = (files) => {
     setFilesToUpload(files);
   };
-
-  const { data: session } = useSession();
 
   if (session) {
     return (

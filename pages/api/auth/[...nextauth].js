@@ -31,23 +31,28 @@ export default NextAuth({
     async jwt({ token, user, account }) {
       // Initial sign in
       if (account && user) {
-        console.log("acc expires at", account.expires_at.toLocaleString);
+        console.log("acc expires at", account.expires_at);
         return {
           idToken: account.id_token,
           accessToken: account.access_token,
-          accessTokenExpires: Date.now() + account.expires_at * 9999999999,
+          accessTokenExpires: account.access_token * 1000,
           refreshToken: account.refresh_token,
           user,
         };
       }
+
       // Return previous token if the access token has not expired yet
+      console.log(
+        token.accessTokenExpires - Date.now(),
+        "diff",
+        token.accessTokenExpires,
+        token.idToken
+      );
 
       if (Date.now() < token.accessTokenExpires) {
         console.log("token not refreshed", token.accessTokenExpires);
-        console.log(token.accessTokenExpires - Date.now());
         return token;
       }
-      console.log("refresh token wanted");
       // Access token has expired, try to update it
       return refreshAccessToken(token);
     },
@@ -57,6 +62,15 @@ export default NextAuth({
       session.error = token.error;
       session.idToken = token.idToken;
       return session;
+    },
+    async signIn({ token, user, account }) {
+      console.log(
+        Date.now(),
+        account.expires_at,
+        account.id_token,
+        "after sign in"
+      ); // Raw id_token
+      return true;
     },
   },
   secret: process.env.SECRET,
@@ -86,11 +100,12 @@ async function refreshAccessToken(token) {
       throw refreshedTokens;
     }
 
+    console.log(Date.now() + refreshedTokens.expires_in * 1000, "at");
     return {
       ...token,
-      idToken: refreshedTokens.idToken,
+      idToken: refreshedTokens.id_token,
       accessToken: refreshedTokens.access_token,
-      accessTokenExpires: Date.now() + refreshedTokens.expires_at * 1000,
+      accessTokenExpires: Date.now() + refreshedTokens.expires_in * 1000,
       refreshToken: refreshedTokens.refresh_token ?? token.refreshToken, // Fall back to old refresh token
     };
   } catch (error) {
