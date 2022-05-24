@@ -57,7 +57,7 @@ const WorkerAllocationsPage = () => {
     const foundUser = (data) => {
       toast(data);
       console.log("customer found data",data)
-      setRoomDataCustomers(..)
+      // setRoomDataCustomers(..)
     };
 
     socket.on("roomUsers", totalUsers);
