@@ -1,5 +1,4 @@
 import { useSession } from "next-auth/react";
-import { useEffect } from "react";
 import RegisterWorker from "../components/RegisterWorker";
 
 export default function RegisterWorkerPage() {

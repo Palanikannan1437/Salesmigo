@@ -112,8 +112,8 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
             </SocketContext.Provider>
           </AuthContextProvider>
         </SessionProvider>
-        <WaveCta />
-        <Footer />
+        <WaveCta /> 
+        <Footer /> 
       </Providers>
     </>
   );

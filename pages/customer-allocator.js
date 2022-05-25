@@ -1,6 +1,6 @@
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import CustomerAllocation from "../components/CustomerAllocation/CustomerAllocation";
 import ProgressBar from "../components/HelperComponents/ProgressBar";
@@ -29,18 +29,18 @@ const CustomerAllocatorPage = (props) => {
     }
   }, [router, session]);
 
+  const socketConnected = useCallback(() => {
+    setSocketStatus(true);
+    toast("connection established");
+  },[]);
+
+  const socketDisconnected = useCallback(() => {
+    setSocketStatus(false);
+    toast("disconnected");
+  },[]);
+
   useEffect(() => {
     console.log("useeffect called");
-
-    const socketConnected = () => {
-      setSocketStatus(true);
-      toast("connection established");
-    };
-
-    const socketDisconnected = () => {
-      setSocketStatus(false);
-      toast("disconnected");
-    };
     socket.on("connect", socketConnected);
     socket.on("disconnect", socketDisconnected);
 

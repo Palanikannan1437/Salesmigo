@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useSession } from "next-auth/react";
@@ -67,18 +67,17 @@ const CustomerAllocation = ({ socket }) => {
     });
   }, [allocatedCustomer, allocatedWorker]);
 
+  const totalUsers = useCallback((data) => {
+    console.log("from socket!!!!!!!!", data);
+    setRoomData(data);
+  }, []);
+
+  const totalCustomers = useCallback((data) => {
+    console.log(data);
+    setCustomerRoomData(data);
+  }, []);
   //listening to all socket events
   useEffect(() => {
-    const totalUsers = (data) => {
-      console.log("from socket!!!!!!!!", data);
-      setRoomData(data);
-    };
-
-    const totalCustomers = (data) => {
-      console.log(data);
-      setCustomerRoomData(data);
-    };
-
     socket.on("roomUsers", totalUsers);
     socket.on("customerFound", totalCustomers);
     return () => {

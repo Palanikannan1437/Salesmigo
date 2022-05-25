@@ -3,9 +3,6 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useSession } from "next-auth/react";
 import AuthContext from "../../store/auth-context";
-import RoomUsersCustomer from "../RoomUsersCustomers";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
 import RoomUsersCustomerWithChoice from "./RoomUsersCustomersWithChoice";
 
 const WorkerAllocation = ({ socket }) => {

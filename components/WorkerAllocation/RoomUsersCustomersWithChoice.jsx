@@ -1,7 +1,10 @@
 import { Avatar, Paper, Stack, Tooltip } from "@mui/material";
+import { useRouter } from "next/router";
 import React from "react";
 
 const RoomUsersCustomerWithChoice = ({ roomUsers, isCustomer }) => {
+  const router = useRouter();
+
   return (
     <div>
       <Paper style={{ maxHeight: "80vh", overflow: "auto", width: 85 }}>
@@ -20,6 +23,11 @@ const RoomUsersCustomerWithChoice = ({ roomUsers, isCustomer }) => {
                     src={"/customer.png"}
                     alt={user.username}
                     variant="square"
+                    onClick={() => {
+                      router.push(
+                        `/customer-dashboard/${user.username.split(" ")[1]}`
+                      );
+                    }}
                   />
                 </Tooltip>
               );

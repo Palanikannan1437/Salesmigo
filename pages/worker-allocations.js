@@ -18,8 +18,8 @@ const WorkerAllocationsPage = () => {
     users: [{ username: "" }],
     room: "",
   });
-
   const socket = useContext(SocketContext);
+  console.log(socket);
 
   useEffect(() => {
     const socketConnected = () => {
@@ -35,9 +35,9 @@ const WorkerAllocationsPage = () => {
     return () => {
       socket.off("connect", socketConnected);
       socket.off("disconnect", socketDisconnected);
-      setTimeout(() => {
-        socket.disconnect();
-      }, 100);
+      // setTimeout(() => {
+      //   socket.disconnect();
+      // }, 100);
     };
   }, [socket]);
 
