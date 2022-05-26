@@ -1,4 +1,4 @@
-import { useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { useEffect } from "react";
 import Login from "../components/Login";
 import styled from "styled-components";
@@ -13,7 +13,7 @@ import SectionTitle from "../components/PageStructureComponents/SectionTitle";
 
 export default function Home(props) {
   const { data: session } = useSession();
-
+  
   return (
     <>
       <Head>

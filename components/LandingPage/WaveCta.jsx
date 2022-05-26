@@ -22,10 +22,10 @@ export default function WaveCta() {
       </svg>
       <CtaWrapper>
         <Container>
-          <Title>
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Temporibus
-            delectus?
-          </Title>
+          <Title>Facing Any Technical Issues?</Title>
+          <Description>
+            Feel free to reach out to us at akashmalinimurugu@gmail.com
+          </Description>
           <CustomButtonGroup>
             <NextLink href="/workflow" passHref>
               <Button>
@@ -67,4 +67,11 @@ const OutlinedButton = styled(Button)`
 
 const CustomButtonGroup = styled(ButtonGroup)`
   justify-content: center;
+`;
+
+const Description = styled.div`
+  font-size: 1.8rem;
+  color: rgba(var(--textSecondary), 0.8);
+  text-align: center;
+  margin-bottom: 5rem;
 `;

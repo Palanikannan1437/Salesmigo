@@ -1,3 +1,4 @@
+import { signIn } from "next-auth/react";
 import styled from "styled-components";
 import Page from "../components/PageStructureComponents/Page";
 import FaqSection from "../views/PricingPage/FaqSection";
