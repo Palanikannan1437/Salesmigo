@@ -1,6 +1,5 @@
-import { getCookie } from "cookies-next";
 import { useSession } from "next-auth/react";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import FaceDetection from "../components/FaceDetection/FaceDetection";
 import AuthContext from "../store/auth-context";
@@ -8,35 +7,34 @@ import { SocketContext } from "../utils/socket";
 
 const CustomerRecognitionPage = (props) => {
   const { data: session } = useSession();
-  const [socketId, setSocketId] = useState("");
   const socket = useContext(SocketContext);
   const authCtx = useContext(AuthContext);
 
   const [roomData, setRoomData] = useState();
+  const [joined, setJoined] = useState(false);
+
+  // useEffect(() => {
+  //   socket.on("connect", () => {
+  //     setSocketId(socket.id);
+  //     toast("connection established!");
+  //   });
+  //   socket.on("disconnect", () => {
+  //     toast("disconnected");
+  //   });
+  //   return () => {
+  //     socket.off("connect", () => {
+  //       toast("connection established!");
+  //     });
+  //     socket.off("disconnect", () => {
+  //       toast("disconnected");
+  //     });
+  //     // setTimeout(() => {
+  //     //   socket.disconnect();
+  //     // }, 1000);
+  //   };
+  // }, [socket]);
 
   useEffect(() => {
-    socket.on("connect", () => {
-      setSocketId(socket.id);
-      console.log(socket.id, "chotu page");
-      toast("connection established!");
-    });
-    socket.on("disconnect", () => {
-      toast("disconnected");
-    });
-    return () => {
-      socket.off("connect", () => {
-        toast("connection established!");
-      });
-      socket.off("disconnect", () => {
-        toast("disconnected");
-      });
-      setTimeout(() => {
-        socket.disconnect();
-      }, 1000);
-    };
-  }, [socket]);
-
-  const sendUserData = () => {
     if (session) {
       socket.emit("joinRoom", {
         name: session?.user.name,
@@ -46,16 +44,15 @@ const CustomerRecognitionPage = (props) => {
         photoUrl: session?.user.image,
       });
     }
-  };
+  }, [session?.user.email]);
+
+  const totalUsers = useCallback((data) => {
+    setJoined(true);
+    setRoomData(data);
+  }, []);
 
   useEffect(() => {
-    const totalUsers = (data) => {
-      console.log(data);
-      setRoomData(data);
-    };
-
     socket.on("roomUsers", totalUsers);
-
     return () => {
       socket.off("roomUsers", totalUsers);
     };
@@ -66,13 +63,18 @@ const CustomerRecognitionPage = (props) => {
     console.log("emitted");
   };
 
+  console.log("roomData", roomData);
+
   if (session) {
     return (
       <>
-        <h1 style={{ color: "black" }}>My socket id is: {socketId}</h1>
-        <button onClick={sendUserData}>Join Room</button>
+        {/* <button onClick={sendUserData}>Join Room</button> */}
         <button onClick={emit}>Emit</button>
-
+        {joined && socket.connected ? (
+          <h1>Online</h1>
+        ) : (
+          <h1>Offline: Please try again by refreshing</h1>
+        )}
         <FaceDetection socket={socket} />
       </>
     );

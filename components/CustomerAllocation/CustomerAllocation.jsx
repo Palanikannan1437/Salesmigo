@@ -9,7 +9,8 @@ import AuthContext from "../../store/auth-context";
 import RoomUsersCustomer from "../RoomUsersCustomers";
 import RoomUsers from "../RoomUsers";
 import OccupiedWorkers from "../OccupiedWorkers";
-
+import styled from "@emotion/styled";
+import SectionTitle from "../PageStructureComponents/SectionTitle";
 const CustomerAllocation = ({ socket }) => {
   const { data: session } = useSession();
   const authCtx = useContext(AuthContext);
@@ -58,6 +59,7 @@ const CustomerAllocation = ({ socket }) => {
     );
   };
   console.log(customerRoomData, "room data of customers");
+
   //emitting an event when customer is allocated a worker
   useEffect(() => {
     console.log(allocatedWorker, allocatedCustomer, "allocated cust and work");
@@ -95,39 +97,58 @@ const CustomerAllocation = ({ socket }) => {
       });
   }, [authCtx.teamID]);
 
-  //send data of a worker to inform others that have joined
-  const sendUserData = () => {
-    if (session) {
-      socket.emit("joinRoom", {
-        name: session?.user.name,
-        email: session?.user.email,
-        type: authCtx.designation,
-        teamID: authCtx.teamID,
-        photoUrl: session?.user.image,
-      });
-    }
-  };
   console.log(roomData);
   return (
     <div>
       <ToastContainer />
-      <button onClick={sendUserData}>Join Room</button>
       <DndProvider backend={HTML5Backend}>
-        <div style={{ display: "flex", width: "500px", border: "solid black" }}>
-          <p>Available Customers</p>
-          <RoomUsersCustomer
-            roomUsers={customerRoomData}
-            isCustomer={true}
-            removeWorkerAndCustomer={removeWorkerAndCustomer}
-            isDroppable="yes"
-          />
-          <p>Available Workers</p>
-          <RoomUsers roomUsers={roomData.users} />
-        </div>
+        <AllocationGroup>
+          <AllocationSubGroup>
+            <h1>Available Customers</h1>
+            <RoomUsersCustomer
+              roomUsers={customerRoomData}
+              isCustomer={true}
+              removeWorkerAndCustomer={removeWorkerAndCustomer}
+              isDroppable="yes"
+            />
+          </AllocationSubGroup>
+          <AllocationSubGroup>
+            <h1>Available Worker Instances</h1>
+            <RoomUsers roomUsers={roomData.users} />
+          </AllocationSubGroup>
+        </AllocationGroup>
       </DndProvider>
-      <OccupiedWorkers roomUsers={roomData.users} />
+      {/* <OccupiedWorkers roomUsers={roomData.users} /> */}
     </div>
   );
 };
+
+const AllocationGroup = styled.div`
+  display: flex;
+  margin-top: 10px;
+  width: 60vw;
+  height: 70vh;
+  border: solid black;
+  position: relative;
+  left: 20%;
+  margin-bottom: 10px;
+  & > *:first-child {
+    margin-right: 2rem;
+  }
+`;
+
+const AllocationSubGroup = styled.div`
+  display: flex;
+  margin-top: 10px;
+  width: 60vw;
+  height: 70vh;
+  /* border: solid black; */
+  position: relative;
+  left: 10%;
+  margin-bottom: 10px;
+  & > *:first-child {
+    margin-right: 2rem;
+  }
+`;
 
 export default CustomerAllocation;

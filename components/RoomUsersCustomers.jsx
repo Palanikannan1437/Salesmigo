@@ -10,7 +10,16 @@ const RoomUsersCustomer = ({
 }) => {
   return (
     <div>
-      <Paper style={{ maxHeight: "80vh", overflow: "auto", width: 85 }}>
+      <Paper
+        style={{
+          maxHeight: "80%",
+          overflow: "auto",
+          width: 85,
+          position: "absolute",
+          top: "60px",
+          left: "15%",
+        }}
+      >
         <Stack direction="column" spacing={2}>
           {roomUsers?.map((user, index) => {
             if (isCustomer && user.username) {

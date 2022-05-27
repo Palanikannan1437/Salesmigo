@@ -1,9 +1,19 @@
-import React from "react";
+import React, { useContext } from "react";
 import NextLink from "next/link";
 import { Avatar, Button, Tag, Text, useTheme } from "@geist-ui/react";
+import { SocketContext } from "../../utils/socket";
+import { useRouter } from "next/router";
 
 const Heading = ({ user }) => {
   const theme = useTheme();
+  const router = useRouter();
+  const socket = useContext(SocketContext);
+  const customerCatered = () => {
+    socket.emit("customerCatered", {
+      customerUsername: user.email,
+    });
+    router.push("/worker-allocations");
+  };
 
   return (
     <>
@@ -28,7 +38,9 @@ const Heading = ({ user }) => {
               <Text h2 className="headding__user-name">
                 {user.name}
               </Text>
-              <Tag className="headding__user-role">{user.role}</Tag>
+              <Tag className="headding__user-role" onClick={customerCatered}>
+                {user.role}
+              </Tag>
 
               {user.role === "Customer" ? (
                 <div className="heading__actions">
