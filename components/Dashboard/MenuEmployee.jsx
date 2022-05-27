@@ -10,7 +10,7 @@ const MenuEmployee = () => {
   return (
     <>
       <nav className="menu-nav">
-        <h1 className="menu-nav__title">Manager&apos's Dashboard</h1>
+        <h1 className="menu-nav__title">Manager&apos;s Dashboard</h1>
         <div>
           <Popover
             content={<UserSettings />}
