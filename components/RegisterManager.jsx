@@ -20,7 +20,7 @@ const RegisterManager = () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${getCookie("google-jwt")}`,
+        Authorization: `Bearer ${session.idToken}`,
       },
       body: JSON.stringify(userData),
     })

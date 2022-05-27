@@ -15,12 +15,6 @@ const CustomerRecognitionPage = (props) => {
   const [roomData, setRoomData] = useState();
 
   useEffect(() => {
-    if (session) {
-      props.handleNavItems(3, "SIGN OUT", true);
-    }
-  }, [session]);
-
-  useEffect(() => {
     socket.on("connect", () => {
       setSocketId(socket.id);
       console.log(socket.id, "chotu page");
@@ -68,7 +62,7 @@ const CustomerRecognitionPage = (props) => {
   }, [socket]);
 
   const emit = () => {
-    socket.emit("customer", "palanikannan m_pk@gmail.com");
+    socket.emit("customer", `palanikannan m_pk@gmail.com${Math.random()}`);
     console.log("emitted");
   };
 

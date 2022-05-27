@@ -23,12 +23,12 @@ export default function Cta() {
             beatae accusamus deleniti nihil quas tempora numquam, vitae culpa.
           </Description>
           <ButtonGroup>
-            <NextLink href="#early-access" passHref>
+            <NextLink href="/workflow" passHref>
               <Button>
                 Check out our workflow<span>&rarr;</span>
               </Button>
             </NextLink>
-            <NextLink href="#whitepaper" passHref>
+            <NextLink href="/features" passHref>
               <OutlinedButton transparent>
                 Features <span>&rarr;</span>
               </OutlinedButton>

@@ -4,7 +4,15 @@ import React from "react";
 const OccupiedWorkers = ({ roomUsers }) => {
   return (
     <div>
-      <Paper style={{ maxHeight: "80vh", overflow: "auto", width: 85 }}>
+      <Paper
+        style={{
+          maxHeight: "80vh",
+          overflow: "auto",
+          width: "100vw",
+          marginTop: "50vh",
+          marginBottom: "20vh",
+        }}
+      >
         <Stack direction="row" spacing={2}>
           {roomUsers?.map((user, index) => {
             if (

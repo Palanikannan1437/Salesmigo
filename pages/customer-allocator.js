@@ -1,5 +1,6 @@
 import { useSession } from "next-auth/react";
-import React, { useContext, useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import CustomerAllocation from "../components/CustomerAllocation/CustomerAllocation";
 import ProgressBar from "../components/HelperComponents/ProgressBar";
@@ -7,38 +8,48 @@ import ProgressBar from "../components/HelperComponents/ProgressBar";
 import { SocketContext } from "../utils/socket";
 
 const CustomerAllocatorPage = (props) => {
-  const { data: session } = useSession();
-
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    if (session) {
-      props.handleNavItems(3, "SIGN OUT", true);
-    }
-  }, [session]);
 
   const socket = useContext(SocketContext);
   const [socketStatus, setSocketStatus] = useState(false);
 
+  const { data: session, status } = useSession();
   useEffect(() => {
-    const socketConnected = () => {
-      setSocketStatus(true);
-      toast("connection established");
-    };
+    if (status !== "loading") {
+      setIsLoading(false);
+      if (session) {
+        console.log("session = true");
+      } else {
+        console.log("first");
+        router.push("/");
+      }
+    } else {
+      setIsLoading(true);
+    }
+  }, [router, session]);
 
-    const socketDisconnected = () => {
-      setSocketStatus(false);
-      toast("disconnected");
-    };
+  const socketConnected = useCallback(() => {
+    setSocketStatus(true);
+    toast("connection established");
+  },[]);
+
+  const socketDisconnected = useCallback(() => {
+    setSocketStatus(false);
+    toast("disconnected");
+  },[]);
+
+  useEffect(() => {
+    console.log("useeffect called");
     socket.on("connect", socketConnected);
     socket.on("disconnect", socketDisconnected);
 
     return () => {
       socket.off("connect", socketConnected);
       socket.off("disconnect", socketDisconnected);
-      // setTimeout(() => {
-      //   socket.disconnect();
-      // }, 100);
+      setTimeout(() => {
+        socket.disconnect();
+      }, 1000);
     };
   }, [socket]);
 

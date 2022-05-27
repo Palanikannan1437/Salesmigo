@@ -15,20 +15,23 @@ export default function Hero() {
     <HeroWrapper>
       <Contents>
         <CustomOverTitle>
-          the coolest, saas product you have ever seen
+          The only Sales Solution You'll ever need
         </CustomOverTitle>
-        <Heading>Make your life easier with our SaaS</Heading>
+        <Heading>Let your sales thrive with Salesamigo</Heading>
         <Description>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis,
-          tempora qui. Explicabo voluptate iure ipsum molestias repudiandae
-          perspiciatis nostrum praesentium, unde pariatur tempora magni rem.
-          Necessitatibus facilis obcaecati ratione.
+          Salesmigo is your key to multiplying your sales and maximizing the
+          profits you make! Elevate your workforce to bring out the best in
+          them, to achieve all new levels of efficiency, productivity and
+          accuracy!
         </Description>
         <CustomButtonGroup>
-          <Button>
-            Check out our workflow <span>&rarr;</span>
-          </Button>
-          <NextLink href="#whitepaper" passHref>
+          <NextLink href="/workflow" passHref>
+            <Button>
+              Check out our workflow <span>&rarr;</span>
+            </Button>
+          </NextLink>
+
+          <NextLink href="/features" passHref>
             <Button transparent>
               Features <span>&rarr;</span>
             </Button>

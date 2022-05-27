@@ -6,6 +6,7 @@ const RoomUsersCustomer = ({
   roomUsers,
   isCustomer,
   removeWorkerAndCustomer,
+  isDroppable,
 }) => {
   return (
     <div>
@@ -15,6 +16,7 @@ const RoomUsersCustomer = ({
             if (isCustomer && user.username) {
               return (
                 <CustomerBoardBox
+                  isDroppable={isDroppable}
                   name={user.username}
                   color={stringToColor(user.username)}
                   id={index}

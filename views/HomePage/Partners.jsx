@@ -5,16 +5,19 @@ import { Autoplay } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
 import Container from "../../components/PageStructureComponents/Container";
 import { media } from "../../utils/media";
-
+import { forwardRef } from "react";
+import "swiper/css";
 const PARTNER_LOGOS = [
   "logoipsum-logo-1.svg",
   "logoipsum-logo-2.svg",
   "logoipsum-logo-3.svg",
   "logoipsum-logo-4.svg",
   "logoipsum-logo-5.svg",
+  "logoipsum-logo-2.svg",
+  "logoipsum-logo-3.svg",
 ];
 
-export default function Partners() {
+function Partners() {
   return (
     <PartnersWrapper>
       <Title>Soon to be partners with</Title>
@@ -38,8 +41,8 @@ export default function Partners() {
         }}
         className="swiper-wrapper"
       >
-        {PARTNER_LOGOS.map((logo) => (
-          <SwiperSlide key={logo}>
+        {PARTNER_LOGOS.map((logo, idx) => (
+          <SwiperSlide key={logo + idx}>
             <NextImage
               src={"/partners/" + logo}
               alt={normalizePartnerLogoName(logo)}
@@ -88,3 +91,5 @@ const PartnersWrapper = styled(Container)`
     }
   }
 `;
+
+export default forwardRef(Partners);

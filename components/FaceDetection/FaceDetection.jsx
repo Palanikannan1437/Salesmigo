@@ -2,8 +2,11 @@ import { getCookie } from "cookies-next";
 import * as faceapi from "@vladmandic/face-api";
 import React, { useEffect, useRef, useState } from "react";
 import { euclideanDistance } from "../../utils/euclideanDistance";
+import { useSession } from "next-auth/react";
 
 function FaceDetection(props) {
+  const { data: session } = useSession();
+
   const [isLoaded, setIsLoaded] = useState(false);
   const [captureVideo, setCaptureVideo] = useState(false);
   const [firstReqSent, setfirstReqSent] = useState(false);
@@ -117,7 +120,7 @@ function FaceDetection(props) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${getCookie("google-jwt")}`,
+        Authorization: `Bearer ${session.idToken}`,
       },
       body: JSON.stringify({ descriptor: detectionDescriptor }),
     })

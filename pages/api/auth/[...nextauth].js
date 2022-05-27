@@ -42,15 +42,16 @@ export default NextAuth({
       }
 
       // Return previous token if the access token has not expired yet
-      console.log(
-        token.accessTokenExpires - Date.now(),
-        "diff",
-        token.accessTokenExpires,
-        token.idToken
-      );
+      // console.log(
+      //   token.accessTokenExpires - Date.now(),
+      //   "diff",
+      //   token.accessTokenExpires,
+      //   token.idToken,
+      //   getCookie("google-jwt")
+      // );
 
       if (Date.now() < token.accessTokenExpires) {
-        console.log("token not refreshed", token.accessTokenExpires);
+        // console.log("token not refreshed", token.accessTokenExpires);
         return token;
       }
       // Access token has expired, try to update it
@@ -64,12 +65,12 @@ export default NextAuth({
       return session;
     },
     async signIn({ token, user, account }) {
-      console.log(
-        Date.now(),
-        account.expires_at,
-        account.id_token,
-        "after sign in"
-      ); // Raw id_token
+      // console.log(
+      //   Date.now(),
+      //   account.expires_at,
+      //   account.id_token,
+      //   "after sign in"
+      // ); // Raw id_token
       return true;
     },
   },
@@ -100,7 +101,11 @@ async function refreshAccessToken(token) {
       throw refreshedTokens;
     }
 
-    console.log(Date.now() + refreshedTokens.expires_in * 1000, "at");
+    // console.log(
+    //   Date.now() + refreshedTokens.expires_in * 1000,
+    //   "at",
+    //   refreshedTokens.id_token
+    // );
     return {
       ...token,
       idToken: refreshedTokens.id_token,
