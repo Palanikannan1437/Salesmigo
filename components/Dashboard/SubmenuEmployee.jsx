@@ -29,15 +29,19 @@ const SubmenuEmployee = () => {
               }}
             >
               <Tabs.Item label="Register Customer" value="/register-customer" />
+
               {authCtx.designation === "Manager" ? (
                 <Tabs.Item label="Register Worker" value="/register-worker" />
               ) : null}
+
               {authCtx.designation === "Worker" ? (
-                <Tabs.Item label="Your Room" value="/register-worker" />
+                <Tabs.Item label="Your Room" value="/worker-allocations" />
               ) : null}
+
               {authCtx.designation === "Manager" ? (
                 <Tabs.Item label="Your Room" value="/customer-allocator" />
               ) : null}
+
               <Tabs.Item
                 label="Face Detection At Entrance"
                 value="/face-detection"
@@ -46,6 +50,7 @@ const SubmenuEmployee = () => {
                 label="Emotion Detection Aisles"
                 value="/aisle-emotion-detection"
               />
+
               <Tabs.Item label="Gesture Detection" value="/gesture-detection" />
             </Tabs>
           </div>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Grid, useTheme, GeistProvider, CssBaseline } from "@geist-ui/react";
-import ProjectCard from "../../../components/Dashboard/project-card";
-import Menu from "../../../components/Dashboard/menu";
+import ProjectCard from "../../../components/Dashboard/ProjectCard";
+import Menu from "../../../components/Dashboard/Menu";
 import { useRouter } from "next/router";
 
 const Page = () => {

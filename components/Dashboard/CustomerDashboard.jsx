@@ -8,11 +8,11 @@ import {
   Text,
   useTheme,
 } from "@geist-ui/react";
-import Menu from "./menu";
-import Heading from "./heading";
+import Menu from "./Menu";
+import Heading from "./Heading";
 import { useRouter } from "next/router";
-import EventListItem from "./activity-event";
-import OverviewProject from "./overview-project";
+import EventListItem from "./ActivityEvent";
+import OverviewProject from "./OverviewProject";
 
 const CustomerDashboard = () => {
   const theme = useTheme();

@@ -46,8 +46,8 @@ export default function Footer() {
     <FooterWrapper>
       <Container>
         <ListContainer>
-          {footerItems.map((singleItem) => (
-            <FooterList key={singleItem.title} {...singleItem} />
+          {footerItems.map((singleItem, idx) => (
+            <FooterList key={singleItem.title + idx} {...singleItem} />
           ))}
         </ListContainer>
         <BottomBar>
@@ -62,8 +62,8 @@ function FooterList({ title, items }) {
   return (
     <ListWrapper>
       <ListHeader>{title}</ListHeader>
-      {items.map((singleItem) => (
-        <ListItem key={singleItem.href} {...singleItem} />
+      {items.map((singleItem, idx) => (
+        <ListItem key={singleItem.href + idx} {...singleItem} />
       ))}
     </ListWrapper>
   );

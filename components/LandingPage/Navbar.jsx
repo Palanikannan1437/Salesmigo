@@ -1,14 +1,11 @@
 import dynamic from "next/dynamic";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import React, { useContext, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { signIn, signOut, useSession } from "next-auth/react";
 
 import styled from "styled-components";
-import {
-  ScrollPositionEffectProps,
-  useScrollPosition,
-} from "../../hooks/useScrollPosition";
+import { useScrollPosition } from "../../hooks/useScrollPosition";
 import { media } from "../../utils/media";
 import Button from "../HelperComponents/Button";
 import Container from "../PageStructureComponents/Container";
@@ -22,7 +19,6 @@ import { removeCookies } from "cookies-next";
 export default function Navbar({ items, isGoogleLoggedIn }) {
   const router = useRouter();
   const { toggle } = Drawer.useDrawer();
-  const authCtx = useContext(AuthContext);
 
   const [scrollingDirection, setScrollingDirection] = useState("none");
 
@@ -81,9 +77,9 @@ export default function Navbar({ items, isGoogleLoggedIn }) {
           </LogoWrapper>
         </NextLink>
         <NavItemList>
-          {items.map((singleItem) => (
+          {items.map((singleItem, idx) => (
             <NavItem
-              key={singleItem.href}
+              key={singleItem.href + idx}
               {...singleItem}
               isGoogleLoggedIn={isGoogleLoggedIn}
             />

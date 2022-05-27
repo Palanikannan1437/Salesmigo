@@ -8,7 +8,7 @@ const ActivityEvent = ({ username, avatar, createdAt, children }) => {
     <>
       <div className="activity-event">
         <Avatar
-          className="activity-event__avatar"
+          className="P__avatar"
           src={avatar}
           alt={`${username} Avatar`}
         />

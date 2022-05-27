@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from "react";
 import { GeistProvider, CssBaseline, useTheme } from "@geist-ui/react";
-import Menu from "./menu";
-import Heading from "./heading";
+import Menu from "./Menu";
+import Heading from "./Heading";
 import { useSession } from "next-auth/react";
 import AuthContext from "../../store/auth-context";
 import MenuEmployee from "./MenuEmployee";

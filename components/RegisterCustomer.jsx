@@ -3,9 +3,12 @@ import TextField from "@mui/material/TextField";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { Button } from "@mui/material";
 import PhoneInput from "react-phone-number-input";
-import { getCookie } from "cookies-next";
+import styled from "styled-components";
+import Button from "../components/HelperComponents/Button";
+import Input from "../components/HelperComponents/Input";
+import { media } from "../utils/media";
+import { toast } from "react-toastify";
 
 const RegisterCustomer = (props) => {
   const inputNameRef = useRef();
@@ -30,22 +33,21 @@ const RegisterCustomer = (props) => {
       customer_images: props.filesToUpload,
     };
 
-    fetch(`${process.env.NEXT_PUBLIC_SERVER}/customer`, {
+    fetch(`${process.env.NEXT_PUBLIC_SERVER}/customers`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${getCookie("google-jwt")}`,
       },
       body: JSON.stringify(customerData),
     })
       .then((response) => {
-        if ((response.status = 404)) {
+        if (response.status === 404) {
           router.push("/error-page");
         }
         return response.json();
       })
       .then((customerData) => {
-        console.log("customerData", customerData);
+        toast("Successfully registered");
       })
       .catch((err) => {
         console.log(err);
@@ -54,49 +56,90 @@ const RegisterCustomer = (props) => {
 
   return (
     <div>
-      <form onSubmit={registerCustomerHandler}>
-        <div>
-          <TextField
-            inputRef={inputNameRef}
-            id="outlined-basic"
-            label="Name"
-            variant="outlined"
-          />
-          <TextField
-            inputRef={inputEmailRef}
-            id="outlined-basic"
-            label="Email"
-            variant="outlined"
-          />
-          <TextField
-            inputRef={inputLocationRef}
-            id="outlined-basic"
-            label="Location"
-            variant="outlined"
-          />
-          <LocalizationProvider dateAdapter={AdapterDateFns}>
-            <DatePicker
-              label="Date of Birth"
-              value={dateOfBirth}
-              onChange={(newValue) => {
-                setDateOfBirth(newValue);
-              }}
-              renderInput={(params) => <TextField {...params} />}
+      <Wrapper>
+        <Form>
+          <InputGroup>
+            <InputStack>
+              <Input placeholder="Your Name" id="name" ref={inputNameRef} />
+            </InputStack>
+            <InputStack>
+              <Input placeholder="Your Email" id="email" ref={inputEmailRef} />
+            </InputStack>
+          </InputGroup>
+          <InputGroup>
+            <InputStack>
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <DatePicker
+                  label="Date of Birth"
+                  value={dateOfBirth}
+                  onChange={(newValue) => {
+                    setDateOfBirth(newValue);
+                  }}
+                  renderInput={(params) => <TextField {...params} />}
+                />
+              </LocalizationProvider>
+            </InputStack>
+            <InputStack>
+              <Input
+                placeholder="Location"
+                id="location"
+                ref={inputLocationRef}
+              />
+            </InputStack>
+          </InputGroup>
+          <InputGroup>
+            <PhoneInput
+              placeholder="Enter phone number"
+              value={phoneNumber}
+              onChange={setPhoneNumber}
+              defaultCountry="IN"
             />
-          </LocalizationProvider>
-          <PhoneInput
-            placeholder="Enter phone number"
-            value={phoneNumber}
-            onChange={setPhoneNumber}
-            defaultCountry="IN"
-          />
-          <Button variant="contained" type="submit">
-            Submit
-          </Button>
-        </div>
-      </form>
+          </InputGroup>
+          <Button onClick={registerCustomerHandler}>Submit</Button>
+        </Form>
+      </Wrapper>
     </div>
   );
 };
+
+const Wrapper = styled.div`
+  flex: 2;
+`;
+
+const Form = styled.form`
+  & > * {
+    margin-bottom: 2rem;
+  }
+`;
+
+const InputGroup = styled.div`
+  display: flex;
+  align-items: center;
+
+  & > *:first-child {
+    margin-right: 2rem;
+  }
+
+  & > * {
+    flex: 1;
+  }
+
+  ${media("<=tablet")} {
+    flex-direction: column;
+    & > *:first-child {
+      margin-right: 0rem;
+      margin-bottom: 2rem;
+    }
+  }
+`;
+
+const InputStack = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  & > *:not(:first-child) {
+    margin-top: 0.5rem;
+  }
+`;
 
 export default RegisterCustomer;

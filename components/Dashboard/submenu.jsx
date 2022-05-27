@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { Tabs, useTheme } from "@geist-ui/react";
-import Link from "next/link";
-import { Button } from "@mui/material";
 
 const Submenu = (props) => {
   const theme = useTheme();

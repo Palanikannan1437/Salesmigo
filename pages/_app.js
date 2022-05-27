@@ -17,7 +17,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
   const [navItems, setNavItems] = useState([
     { title: "Features", href: "/features" },
     { title: "Pricing", href: "/pricing" },
-    { title: "Contact", href: "/contact" },
+    { title: "Register Store", href: "/register-manager" },
     { title: "Sign In", href: "/sign-up", outlined: true },
   ]);
 
@@ -92,7 +92,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
     }
   }, [globalSession]);
 
-  console.log("in app", isGoogleLoggedIn);
+  console.log("in app", globalSession, isGoogleLoggedIn);
 
   return (
     <>

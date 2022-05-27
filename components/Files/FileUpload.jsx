@@ -34,14 +34,16 @@ const FileUpload = (props) => {
   return (
     <div
       {...getRootProps()}
-      style={{ color: "black", border: "solid", margin: "100px" }}
+      style={{
+        color: "black",
+        border: "solid",
+        height: "20rem",
+        width: "40rem",
+      }}
     >
-      <input
-        {...getInputProps()}
-        // style={{ color: "black", border: "solid", margin: "100px" }}
-      />
+      <input {...getInputProps()} />
 
-      <p>Upload Photos of Customer By Dragging photos to here</p>
+      <h3>Upload Photos of Customer By Dragging photos to here</h3>
 
       {files.map((fileWrapper, indx) => {
         return (

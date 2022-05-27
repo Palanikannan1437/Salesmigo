@@ -1,7 +1,7 @@
 import React from "react";
 import { Avatar, Button, useTheme, Popover } from "@geist-ui/react";
-import Submenu from "./submenu";
-import UserSettings from "./user-settings";
+import Submenu from "./Submenu";
+import UserSettings from "./UserSettings";
 
 const Menu = (props) => {
   const theme = useTheme();
