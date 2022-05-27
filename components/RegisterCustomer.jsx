@@ -30,7 +30,7 @@ const RegisterCustomer = (props) => {
       customer_images: props.filesToUpload,
     };
 
-    fetch(`${process.env.NEXT_PUBLIC_SERVER}/customers/customer`, {
+    fetch(`${process.env.NEXT_PUBLIC_SERVER}/customer`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

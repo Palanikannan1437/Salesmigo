@@ -2,10 +2,12 @@ import * as faceapi from "@vladmandic/face-api";
 import React, { useEffect, useRef, useState } from "react";
 import { euclideanDistance } from "../../utils/euclideanDistance";
 import { useSession } from "next-auth/react";
-import sampleComparisonDescriptor from "../../utils/Testing/sampleComparisonDescriptor";
-import ElectricBoltIcon from "@mui/icons-material/ElectricBolt";
+import OverTitle from "../PageStructureComponents/OverTitle";
+import ProgressBar from "../HelperComponents/ProgressBar";
+import styled from "@emotion/styled";
+import EmojiEmotionsIcon from "@mui/icons-material/EmojiEmotions";
 
-function FaceDetection(props) {
+function EmotionDetection(props) {
   const { data: session } = useSession();
 
   const [isLoaded, setIsLoaded] = useState(false);
@@ -16,6 +18,8 @@ function FaceDetection(props) {
 
   const [detectionDescriptor, setDetectionDescripter] = useState([]);
   const [detect, setDetection] = useState([]);
+  const [detectionExpression, setdetectionExpression] = useState([]);
+
   const [name, setName] = useState("");
 
   const prevDetection = useRef([-1, -1]);
@@ -61,6 +65,11 @@ function FaceDetection(props) {
     return () => clearInterval(interval);
   }, [isLoaded]);
 
+  //find most suited expression
+  const getMaxValueKey = (obj) => {
+    return Object.keys(obj).reduce((a, b) => (obj[a] > obj[b] ? a : b));
+  };
+
   const handleVideoOnPlay = async () => {
     try {
       canvasRef.current.innerHTML = faceapi.createCanvasFromMedia(
@@ -80,9 +89,11 @@ function FaceDetection(props) {
         .withAgeAndGender();
 
       setDetectionDescripter(detections[0].descriptor);
+      setdetectionExpression(getMaxValueKey(detections[0].expressions));
       setDetection(detections);
-      faceapi.matchDimensions(canvasRef.current, displaySize);
+      // console.log(detections);
 
+      faceapi.matchDimensions(canvasRef.current, displaySize);
       const resizedDetections = faceapi.resizeResults(detections, displaySize);
 
       canvasRef &&
@@ -101,7 +112,7 @@ function FaceDetection(props) {
 
   useEffect(() => {
     if (!firstReqSent && detect.length > 0) {
-      compareFaces(detectionDescriptor);
+      compareFaces(detectionDescriptor, detectionExpression);
       setfirstReqSent(true);
       console.log("FIRST TIME api for face detection called!!");
     } else {
@@ -109,20 +120,18 @@ function FaceDetection(props) {
         euclideanDistance(detectionDescriptor, prevDetection.current) > 0.45
       ) {
         console.log("api for face detection called!!");
-        compareFaces(detectionDescriptor);
+        compareFaces(detectionDescriptor, detectionExpression);
       }
     }
-
     prevDetection.current = detectionDescriptor;
-  }, [detectionDescriptor, firstReqSent]);
+  }, [detectionDescriptor, firstReqSent, detectionExpression]);
 
-  const compareFaces = (detectionDescriptor) => {
-    console.log(detectionDescriptor);
+  const compareFaces = (detectionDescriptor, detectionExpression) => {
     fetch(`${process.env.NEXT_PUBLIC_SERVER}/customers/find`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${session.idToken}`,
+        Authorization: `Bearer ${session?.idToken}`,
       },
       body: JSON.stringify({ descriptor: detectionDescriptor }),
     })
@@ -130,14 +139,19 @@ function FaceDetection(props) {
         return response.json();
       })
       .then((userData) => {
-        if (userData._distance < 0.45) {
-          setName(userData._label);
-          props.socket.emit("customer", userData._label);
+        if (userData._label) {
+          if (userData._distance < 0.5) {
+            setName(userData._label);
+            props.updateCustomerEmotion(
+              detectionExpression,
+              userData._label.split(" ")[1],
+              props.aisleName
+            );
+          }
         }
       })
       .catch((err) => {
         console.log(err);
-        compareFaces(detectionDescriptor);
       });
   };
 
@@ -149,9 +163,9 @@ function FaceDetection(props) {
 
   return (
     <div>
-      <button onClick={() => compareFaces(sampleComparisonDescriptor)}>
-        Compare
-      </button>
+      <Content>
+        <OverTitle>Aisle - {props.aisleName}</OverTitle>
+      </Content>
       {isLoaded ? (
         <div style={{ textAlign: "center", padding: "10px" }}>
           {captureVideo ? (
@@ -182,11 +196,14 @@ function FaceDetection(props) {
                 borderRadius: "10px",
               }}
             >
-              Start Customer Detection <ElectricBoltIcon fontSize="large" />
+              Start Emotion Analysis{" "}
+              <EmojiEmotionsIcon fontSize="large" sx={{ color: "white" }} />
             </button>
           )}
         </div>
-      ) : null}
+      ) : (
+        <ProgressBar open={true} />
+      )}
       {captureVideo ? (
         isLoaded ? (
           <div>
@@ -208,14 +225,22 @@ function FaceDetection(props) {
             </div>
           </div>
         ) : (
-          <div>loading...</div>
+          <ProgressBar open={true} />
         )
       ) : (
-        <></>
+        <ProgressBar open={captureVideo} />
       )}
-      <h1 style={{ color: "black" }}>Helo {name}</h1>
     </div>
   );
 }
 
-export default FaceDetection;
+const Content = styled.div`
+  padding: 4rem 3rem 2rem 5rem;
+
+  & > *:not(:first-child) {
+    margin-top: 2rem;
+  }
+  text-align: center;
+`;
+
+export default EmotionDetection;

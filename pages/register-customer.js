@@ -1,5 +1,5 @@
 import { useSession } from "next-auth/react";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import FileUpload from "../components/Files/FileUpload";
 import RegisterCustomer from "../components/RegisterCustomer";
 

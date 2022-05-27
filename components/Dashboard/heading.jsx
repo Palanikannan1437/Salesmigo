@@ -1,6 +1,6 @@
 import React from "react";
 import NextLink from "next/link";
-import { Avatar, Button, Tag, Text, Link, useTheme } from "@geist-ui/react";
+import { Avatar, Button, Tag, Text, useTheme } from "@geist-ui/react";
 
 const Heading = ({ user }) => {
   const theme = useTheme();
@@ -9,11 +9,20 @@ const Heading = ({ user }) => {
     <>
       <div className="heading__wrapper">
         <div className="heading">
-          <Avatar
-            alt="Your Avatar"
-            className="heading__user-avatar"
-            src="/customer.png"
-          />
+          {user.role === "Customer" ? (
+            <Avatar
+              alt="Your Avatar"
+              className="heading__user-avatar"
+              src="/customer.png"
+            />
+          ) : (
+            <Avatar
+              alt="Your Avatar"
+              className="heading__user-avatar"
+              src={user.photo}
+            />
+          )}
+
           <div className="heading__name">
             <div className="heading__title">
               <Text h2 className="headding__user-name">
@@ -21,30 +30,24 @@ const Heading = ({ user }) => {
               </Text>
               <Tag className="headding__user-role">{user.role}</Tag>
 
-              <div className="heading__actions">
-                <NextLink href="/projects" passHref>
-                  <Button type="secondary" auto>
-                    Add Bills
-                  </Button>
-                </NextLink>
-              </div>
+              {user.role === "Customer" ? (
+                <div className="heading__actions">
+                  <NextLink href="/billing" passHref>
+                    <Button type="secondary" auto>
+                      Add Bills
+                    </Button>
+                  </NextLink>
+                </div>
+              ) : null}
             </div>
 
             {user.email && (
               <div className="heading__integration">
-                <Text className="heading__integration-title">
-                  
-                </Text>
-                <Link
-                  href={`/`}
-                  target="_blank"
-                  rel="noopener"
-                  underline
-                >
-                  <div className="heading__integration-inner">
-                    <span>{user.email}</span>
-                  </div>
-                </Link>
+                <Text className="heading__integration-title"></Text>
+
+                <div className="heading__integration-inner">
+                  <span>{user.email}</span>
+                </div>
               </div>
             )}
           </div>

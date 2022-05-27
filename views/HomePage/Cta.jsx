@@ -15,12 +15,10 @@ export default function Cta() {
         <Stack>
           <OverTitle>Lorem ipsum dolor sit amet</OverTitle>
           <SectionTitle>
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Temporibus
-            delectus?
+            Have Any Queries Related to Pricing and Features?
           </SectionTitle>
           <Description>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Assumenda
-            beatae accusamus deleniti nihil quas tempora numquam, vitae culpa.
+            Feel free to reach out to us at akashmalinimurugu@gmail.com
           </Description>
           <ButtonGroup>
             <NextLink href="/workflow" passHref>

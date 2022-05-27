@@ -1,4 +1,4 @@
-import { getSession, SessionProvider, signOut } from "next-auth/react";
+import { getSession, SessionProvider, signIn, signOut } from "next-auth/react";
 import { socket, SocketContext } from "../utils/socket";
 import { AuthContextProvider } from "../store/auth-context";
 import GlobalStyles from "../components/GlobalStyles";
@@ -22,13 +22,12 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
   ]);
 
   const [globalSession, setglobalSession] = useState(null);
+  const [isGoogleLoggedIn, setIsGoogleLoggedIn] = useState(false);
 
-  const handleNavItems = (id, text, isSignedIn) => {
+  const handleNavItems = (id, text) => {
     setNavItems((prevData) =>
       prevData.map((el, index) => {
-        return index === id
-          ? { ...el, title: text, isSignedIn: isSignedIn }
-          : el;
+        return index === id ? { ...el, title: text } : el;
       })
     );
   };
@@ -42,12 +41,20 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
   }, []);
 
   useEffect(() => {
-    if (globalSession) {
-      handleNavItems(3, "SIGN OUT");
+    if (globalSession?.error === "RefreshAccessTokenError") {
+      signIn(); // Force sign in to hopefully resolve error while asking for refreshtoken
     }
   }, [globalSession]);
 
-  const [isGoogleLoggedIn, setIsGoogleLoggedIn] = useState(false);
+  useEffect(() => {
+    if (globalSession) {
+      handleNavItems(3, "SIGN OUT");
+      setNavItems((prevData) => [
+        { title: "Dashboard", href: "/employee-dashboard" },
+        ...prevData,
+      ]);
+    }
+  }, [globalSession]);
 
   useEffect(() => {
     if (globalSession) {
@@ -112,8 +119,8 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
             </SocketContext.Provider>
           </AuthContextProvider>
         </SessionProvider>
-        <WaveCta /> 
-        <Footer /> 
+        <WaveCta />
+        <Footer />
       </Providers>
     </>
   );
