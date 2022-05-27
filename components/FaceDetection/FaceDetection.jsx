@@ -1,10 +1,13 @@
-import { getCookie } from "cookies-next";
 import * as faceapi from "@vladmandic/face-api";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { euclideanDistance } from "../../utils/euclideanDistance";
-import { toast, ToastContainer } from "react-toastify";
+import { useSession } from "next-auth/react";
+import sampleComparisonDescriptor from "../../utils/Testing/sampleComparisonDescriptor";
+import ElectricBoltIcon from "@mui/icons-material/ElectricBolt";
 
 function FaceDetection(props) {
+  const { data: session } = useSession();
+
   const [isLoaded, setIsLoaded] = useState(false);
   const [captureVideo, setCaptureVideo] = useState(false);
   const [firstReqSent, setfirstReqSent] = useState(false);
@@ -58,7 +61,6 @@ function FaceDetection(props) {
     return () => clearInterval(interval);
   }, [isLoaded]);
 
-  console.log(isLoaded);
   const handleVideoOnPlay = async () => {
     try {
       canvasRef.current.innerHTML = faceapi.createCanvasFromMedia(
@@ -115,11 +117,12 @@ function FaceDetection(props) {
   }, [detectionDescriptor, firstReqSent]);
 
   const compareFaces = (detectionDescriptor) => {
-    fetch(`${process.env.NEXT_PUBLIC_SERVER}/customers/customer/find1`, {
+    console.log(detectionDescriptor);
+    fetch(`${process.env.NEXT_PUBLIC_SERVER}/customers/find`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${getCookie("google-jwt")}`,
+        Authorization: `Bearer ${session.idToken}`,
       },
       body: JSON.stringify({ descriptor: detectionDescriptor }),
     })
@@ -127,11 +130,14 @@ function FaceDetection(props) {
         return response.json();
       })
       .then((userData) => {
-        setName(userData.customer._label);
-        props.socket.emit("customer", userData.customer._label);
+        if (userData._distance < 0.45) {
+          setName(userData._label);
+          props.socket.emit("customer", userData._label);
+        }
       })
       .catch((err) => {
         console.log(err);
+        compareFaces(detectionDescriptor);
       });
   };
 
@@ -143,7 +149,9 @@ function FaceDetection(props) {
 
   return (
     <div>
-      <ToastContainer />
+      <button onClick={() => compareFaces(sampleComparisonDescriptor)}>
+        Compare
+      </button>
       {isLoaded ? (
         <div style={{ textAlign: "center", padding: "10px" }}>
           {captureVideo ? (
@@ -166,7 +174,7 @@ function FaceDetection(props) {
               onClick={startVideo}
               style={{
                 cursor: "pointer",
-                backgroundColor: "green",
+                backgroundColor: "rgb(22,115,255)",
                 color: "white",
                 padding: "15px",
                 fontSize: "25px",
@@ -174,7 +182,7 @@ function FaceDetection(props) {
                 borderRadius: "10px",
               }}
             >
-              Open Webcam
+              Start Customer Detection <ElectricBoltIcon fontSize="large" />
             </button>
           )}
         </div>

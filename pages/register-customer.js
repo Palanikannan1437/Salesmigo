@@ -1,22 +1,31 @@
+import styled from "@emotion/styled";
 import { useSession } from "next-auth/react";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import { ToastContainer } from "react-toastify";
 import FileUpload from "../components/Files/FileUpload";
+import SectionTitle from "../components/PageStructureComponents/SectionTitle";
 import RegisterCustomer from "../components/RegisterCustomer";
+import { media } from "../utils/media";
 
 const RegisterCustomerPage = () => {
   const [filesToUpload, setFilesToUpload] = useState([]);
+  const { data: session } = useSession();
 
   const updateFileToSend = (files) => {
     setFilesToUpload(files);
   };
 
-  const { data: session } = useSession();
-
   if (session) {
     return (
       <>
-        <RegisterCustomer filesToUpload={filesToUpload} />
-        <FileUpload updateFilesToSend={updateFileToSend} />
+        <ToastContainer />
+        <SectionTitle>Enter Customer Details</SectionTitle>
+        <ContactContainer>
+          <RegisterCustomer filesToUpload={filesToUpload} />
+          <FileContainer>
+            <FileUpload updateFilesToSend={updateFileToSend} />
+          </FileContainer>
+        </ContactContainer>
       </>
     );
   }
@@ -27,5 +36,22 @@ const RegisterCustomerPage = () => {
     </>
   );
 };
+const FileContainer = styled.div`
+  position: relative;
+  left: 30px;
+  top: 10px;
+  ${media("<=tablet")} {
+    flex-direction: column;
+  }
+`;
 
+const ContactContainer = styled.div`
+  display: flex;
+  position: relative;
+  top: 60px;
+  left: 20%;
+  ${media("<=tablet")} {
+    flex-direction: column;
+  }
+`;
 export default RegisterCustomerPage;

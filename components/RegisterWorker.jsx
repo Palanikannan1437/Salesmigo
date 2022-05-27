@@ -1,8 +1,14 @@
-import { Button, TextField } from "@mui/material";
+import styled from "@emotion/styled";
 import { useRouter } from "next/router";
 import React, { useRef } from "react";
+import { media } from "../utils/media";
+import Button from "../components/HelperComponents/Button";
+import Input from "../components/HelperComponents/Input";
+import { useSession } from "next-auth/react";
 
 const RegisterWorker = () => {
+  const { data: session } = useSession();
+
   const router = useRouter();
   const inputNameRef = useRef();
   const inputEmailRef = useRef();
@@ -19,12 +25,12 @@ const RegisterWorker = () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${getCookie("google-jwt")}`,
+        Authorization: `Bearer ${session.idToken}`,
       },
       body: JSON.stringify(userData),
     })
       .then((response) => {
-        if ((response.status = 404)) {
+        if ((response.status === 404)) {
           router.push("/error-page");
         }
         return response.json();
@@ -38,27 +44,56 @@ const RegisterWorker = () => {
   };
   return (
     <div>
-      <form onSubmit={registerWorkerHandler}>
+      <form>
         <div>
-          <TextField
-            inputRef={inputNameRef}
-            id="outlined-basic"
-            label="Name"
-            variant="outlined"
-          />
-          <TextField
-            inputRef={inputEmailRef}
-            id="outlined-basic"
-            label="Email"
-            variant="outlined"
-          />
-          <Button variant="contained" type="submit">
-            Submit
-          </Button>
+          <InputGroup>
+            <InputStack>
+              <Input placeholder="Worker's Name" id="name" ref={inputNameRef} />
+            </InputStack>
+            <InputStack>
+              <Input
+                placeholder="Worker's Email"
+                id="email"
+                ref={inputEmailRef}
+              />
+            </InputStack>
+          </InputGroup>
+
+          <Button onClick={registerWorkerHandler}>Submit</Button>
         </div>
       </form>
     </div>
   );
 };
+const InputGroup = styled.div`
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  & > *:first-child {
+    margin-right: 2rem;
+  }
+
+  & > * {
+    flex: 1;
+  }
+
+  ${media("<=tablet")} {
+    flex-direction: column;
+    & > *:first-child {
+      margin-right: 0rem;
+      margin-bottom: 2rem;
+    }
+  }
+`;
+
+const InputStack = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  & > *:not(:first-child) {
+    margin-top: 0.5rem;
+  }
+`;
 
 export default RegisterWorker;

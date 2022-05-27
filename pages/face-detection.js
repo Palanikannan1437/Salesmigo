@@ -2,21 +2,17 @@ import { getCookie } from "cookies-next";
 import { useSession } from "next-auth/react";
 import React, { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import CustomerAllocation from "../components/CustomerAllocation/CustomerAllocation";
 import FaceDetection from "../components/FaceDetection/FaceDetection";
-import AuthContext from "../components/store/auth-context";
+import AuthContext from "../store/auth-context";
 import { SocketContext } from "../utils/socket";
-import CustomerAllocatorPage from "./customer-allocator";
 
-const CustomerRecognitionPage = () => {
+const CustomerRecognitionPage = (props) => {
   const { data: session } = useSession();
   const [socketId, setSocketId] = useState("");
   const socket = useContext(SocketContext);
   const authCtx = useContext(AuthContext);
 
   const [roomData, setRoomData] = useState();
-
-  console.log(socket);
 
   useEffect(() => {
     socket.on("connect", () => {
@@ -47,6 +43,7 @@ const CustomerRecognitionPage = () => {
         email: session?.user.email,
         type: authCtx.designation,
         teamID: authCtx.teamID,
+        photoUrl: session?.user.image,
       });
     }
   };
@@ -64,11 +61,18 @@ const CustomerRecognitionPage = () => {
     };
   }, [socket]);
 
+  const emit = () => {
+    socket.emit("customer", `palanikannan m_pk@gmail.com${Math.random()}`);
+    console.log("emitted");
+  };
+
   if (session) {
     return (
       <>
         <h1 style={{ color: "black" }}>My socket id is: {socketId}</h1>
         <button onClick={sendUserData}>Join Room</button>
+        <button onClick={emit}>Emit</button>
+
         <FaceDetection socket={socket} />
       </>
     );

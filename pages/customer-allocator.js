@@ -1,28 +1,46 @@
-import { Button } from "@mui/material";
 import { useSession } from "next-auth/react";
-import React, { useContext, useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import CustomerAllocation from "../components/CustomerAllocation/CustomerAllocation";
+import ProgressBar from "../components/HelperComponents/ProgressBar";
+
 import { SocketContext } from "../utils/socket";
 
 const CustomerAllocatorPage = (props) => {
-  const { data: session } = useSession();
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const [socketStatus, setSocketStatus] = useState(false);
-  //get team details of an employee
-  const [roomData, setRoomData] = useState();
   const socket = useContext(SocketContext);
+  const [socketStatus, setSocketStatus] = useState(false);
+
+  const { data: session, status } = useSession();
+  useEffect(() => {
+    if (status !== "loading") {
+      setIsLoading(false);
+      if (session) {
+        console.log("session = true");
+      } else {
+        console.log("first");
+        router.push("/");
+      }
+    } else {
+      setIsLoading(true);
+    }
+  }, [router, session]);
+
+  const socketConnected = useCallback(() => {
+    setSocketStatus(true);
+    toast("connection established");
+  },[]);
+
+  const socketDisconnected = useCallback(() => {
+    setSocketStatus(false);
+    toast("disconnected");
+  },[]);
 
   useEffect(() => {
-    const socketConnected = () => {
-      setSocketStatus(true);
-      toast("connection established");
-    };
-
-    const socketDisconnected = () => {
-      setSocketStatus(false);
-      toast("disconnected");
-    };
+    console.log("useeffect called");
     socket.on("connect", socketConnected);
     socket.on("disconnect", socketDisconnected);
 
@@ -31,29 +49,13 @@ const CustomerAllocatorPage = (props) => {
       socket.off("disconnect", socketDisconnected);
       setTimeout(() => {
         socket.disconnect();
-      }, 100);
+      }, 1000);
     };
   }, [socket]);
 
-  useEffect(() => {
-    const totalUsers = (data) => {
-      console.log(data);
-      setRoomData(data);
-    };
-
-    const foundUser = (data) => {
-      toast(data);
-    };
-
-    socket.on("roomUsers", totalUsers);
-    socket.on("customerFound", foundUser);
-    return () => {
-      socket.off("roomUsers", totalUsers);
-      socket.off("customerFound", foundUser);
-    };
-  }, [socket]);
   return (
     <div>
+      <ProgressBar open={isLoading} />
       <CustomerAllocation socket={socket} />
       <ToastContainer />
     </div>
