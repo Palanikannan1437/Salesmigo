@@ -47,10 +47,11 @@ const GestureDetection = (props) => {
   //load face recognition models(to make it less heavy, we'll use tinyFaceDetector)
   useEffect(() => {
     const loadModels = async () => {
-      await faceapi.nets.tinyFaceDetector.loadFromUri("/models");
+      await faceapi.nets.ssdMobilenetv1.loadFromUri("/models");
       await faceapi.nets.faceLandmark68Net.loadFromUri("/models");
       await faceapi.nets.faceRecognitionNet.loadFromUri("/models");
       setIsLoadedFaceModel(true);
+
     };
     loadModels();
   }, []);
@@ -85,7 +86,7 @@ const GestureDetection = (props) => {
         detectFace();
         detectGestures(net);
       }
-    }, 1000);
+    }, 300);
     return () => clearInterval(interval);
   }, [
     isLoadedFaceModel,
@@ -134,7 +135,7 @@ const GestureDetection = (props) => {
       const detections = await faceapi
         .detectAllFaces(
           webcamRef.current,
-          new faceapi.TinyFaceDetectorOptions()
+          new faceapi.SsdMobilenetv1Options()
         )
         .withFaceLandmarks()
         .withFaceDescriptors();
@@ -155,12 +156,6 @@ const GestureDetection = (props) => {
         canvasRef &&
           canvasRef.current &&
           faceapi.draw.drawDetections(canvasRef.current, resizedDetections);
-        canvasRef &&
-          canvasRef.current &&
-          faceapi.draw.drawFaceExpressions(
-            canvasRef.current,
-            resizedDetections
-          );
       }
     } catch (err) {
       console.log("error is:", err);
@@ -199,7 +194,7 @@ const GestureDetection = (props) => {
       })
       .then((userData) => {
         if (userData._label) {
-          if (userData._distance < 0.45) {
+          if (userData._distance < 0.5) {
             toast(
               `${
                 userData._label.split(" ")[0]

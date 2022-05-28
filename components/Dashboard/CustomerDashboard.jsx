@@ -23,16 +23,18 @@ const CustomerDashboard = () => {
   useEffect(() => {
     if (router.isReady) {
       fetch(
-        `${process.env.NEXT_PUBLIC_SERVER}/aisles/purchase/${router.query["customeremail"]}`
+        `${process.env.NEXT_PUBLIC_SERVER}/aisles/purchases/${router.query["customeremail"]}`
       )
         .then((response) => {
           if (response.status === 404) {
-            router.push("/error-page/");
+            // router.push("/error-page/");
           }
           return response.json();
         })
         .then((data) => {
-          setRecentPurchases(data.purchases);
+          if (data.purchases) {
+            setRecentPurchases(data.purchases);
+          }
         })
         .catch((err) => {
           console.log(err);
@@ -72,7 +74,11 @@ const CustomerDashboard = () => {
                   hasPurchased={recentPurchases.length > 0}
                   query={searchQuery}
                   projectId="Recommended Purchases"
-                  typeOfRecommendation="Recommendations Based on User's Previous Purchases"
+                  typeOfRecommendation={
+                    recentPurchases.length > 0
+                      ? "Recommendations Based on User's Previous Purchases"
+                      : "Based on General Trends"
+                  }
                 />
               </div>
               <div style={{ marginBottom: "30px" }}>
@@ -80,6 +86,7 @@ const CustomerDashboard = () => {
                   projectId="Recommendations Based on Reactions"
                   repo="birthdays,etc"
                   createdAt="5d"
+                  query={searchQuery}
                 />
               </div>
               <div style={{ marginBottom: "30px" }}>
@@ -87,12 +94,14 @@ const CustomerDashboard = () => {
                   projectId="Recommendations Based on Gestures"
                   repo="birthdays,etc"
                   createdAt="5d"
+                  query={searchQuery}
                 />
               </div>
               <div style={{ marginBottom: "30px" }}>
                 <OverviewProject
                   projectId="Favorite Brands"
                   typeOfRecommendation="Recommendations of User's Brand Favorites"
+                  query={searchQuery}
                 />
               </div>
 

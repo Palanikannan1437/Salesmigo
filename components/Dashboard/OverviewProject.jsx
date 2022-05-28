@@ -4,7 +4,7 @@ import { Button, Text, Link, Card, Dot, Tag, useTheme } from "@geist-ui/react";
 const OverviewProject = ({
   projectId,
   typeOfRecommendation,
-  searchQuery,
+  query,
   hasPurchased,
 }) => {
   const theme = useTheme();
@@ -14,8 +14,8 @@ const OverviewProject = ({
   //getting recommendations of the user based on previous purchases
   useEffect(() => {
     if (
-      projectId === "Recommended Purchases" ||
-      projectId === "Favorite Brands"
+      query &&
+      (projectId === "Recommended Purchases" || projectId === "Favorite Brands")
     ) {
       fetch(`${process.env.NEXT_PUBLIC_SERVER}/aisles/recommendations`, {
         method: "POST",
@@ -23,7 +23,7 @@ const OverviewProject = ({
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          emailId: searchQuery,
+          emailId: query,
           scenario: hasPurchased
             ? "Fashion-Items-to-User"
             : "ItemsToUserGeneral",
@@ -31,18 +31,81 @@ const OverviewProject = ({
       })
         .then((response) => {
           if (response.status === 404) {
-            router.push("/error-page");
+            // router.push("/error-page");
           }
           return response.json();
         })
         .then((data) => {
+          console.log(data.recommendedItems.recomms);
           setRecommendations(data.recommendedItems.recomms);
         })
         .catch((err) => {
           console.log(err);
         });
     }
-  }, []);
+  }, [query]);
+
+  useEffect(() => {
+    if (query && projectId === "Recommendations Based on Reactions") {
+      fetch(
+        `${process.env.NEXT_PUBLIC_SERVER}/aisles/recommendations-emotions`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            emailId: query,
+          }),
+        }
+      )
+        .then((response) => {
+          if (response.status === 404) {
+            // router.push("/error-page");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          if (data.recommendation) {
+            setRecommendations(data.recommendation);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, [query]);
+
+  useEffect(() => {
+    if (query && projectId === "Recommendations Based on Gestures") {
+      fetch(
+        `${process.env.NEXT_PUBLIC_SERVER}/aisles/recommendations-gestures`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            emailId: query,
+          }),
+        }
+      )
+        .then((response) => {
+          if (response.status === 404) {
+            // router.push("/error-page");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          if (data.recommendation) {
+            setRecommendations(data.recommendation);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, [query]);
 
   return (
     <>
@@ -52,7 +115,7 @@ const OverviewProject = ({
             <Text h3>{projectId}</Text>
           </div>
           <div>
-            {recommendations.length > 0 && projectId === "Recommended Purchases"
+            {projectId === "Recommended Purchases" && recommendations.length > 0
               ? recommendations.map((recommendation, idx) => {
                   return (
                     <Dot
@@ -90,6 +153,48 @@ const OverviewProject = ({
                             recommendation.id.split(/(?=[A-Z])/).length - 1
                           ]}
                       </Link>
+                    </Dot>
+                  );
+                })
+              : null}
+
+            {projectId === "Recommendations Based on Reactions" &&
+            recommendations.length > 0
+              ? recommendations.map((recommendation, idx) => {
+                  return (
+                    <Dot
+                      key={idx}
+                      className="project__deployment"
+                      type="success"
+                    >
+                      <Link href="#">{recommendation.aisleName}</Link>
+                      <Tag
+                        className="project__environment-tag"
+                        type="secondary"
+                      >
+                        Aisle - {recommendation.aisleName}
+                      </Tag>
+                    </Dot>
+                  );
+                })
+              : null}
+
+            {projectId === "Recommendations Based on Gestures" &&
+            recommendations.length > 0
+              ? recommendations.map((recommendation, idx) => {
+                  return (
+                    <Dot
+                      key={idx}
+                      className="project__deployment"
+                      type="success"
+                    >
+                      <Link href="#">{recommendation.aisleName}</Link>
+                      <Tag
+                        className="project__environment-tag"
+                        type="secondary"
+                      >
+                        Aisle - {recommendation.aisleName}
+                      </Tag>
                     </Dot>
                   );
                 })

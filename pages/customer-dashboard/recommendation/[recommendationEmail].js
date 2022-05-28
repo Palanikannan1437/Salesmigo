@@ -14,6 +14,36 @@ const Page = () => {
     setSearchQuery(router.query["recommendationEmail"]);
   }, [router.isReady]);
 
+  const [recommendations, setRecommendations] = useState([]);
+
+  useEffect(() => {
+    if (router.isReady) {
+      fetch(`${process.env.NEXT_PUBLIC_SERVER}/aisles/recommendations`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          emailId: router.query["recommendationEmail"],
+          scenario: "Fashion-Items-to-User",
+        }),
+      })
+        .then((response) => {
+          if (response.status === 404) {
+            // router.push("/error-page");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          console.log(data.recommendedItems.recomms);
+          setRecommendations(data.recommendedItems.recomms);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, [router.isReady]);
+
   return (
     <>
       <GeistProvider>
@@ -22,7 +52,27 @@ const Page = () => {
         <div className="page__wrapper">
           <div className="page__content">
             <Grid.Container gap={2} marginTop={1} justify="flex-start">
-              <Grid xs={24} sm={12} md={8}>
+              {recommendations.length > 0
+                ? recommendations.map((recommendation, idx) => {
+                    return (
+                      <Grid xs={24} sm={12} md={8} key={idx}>
+                        <ProjectCard
+                          productBrand={recommendation.id.split(/(?=[A-Z])/)[0]}
+                          newPurchase={{
+                            repo: recommendation.id
+                              .split(/(?=[A-Z])/)
+                              .join(" "),
+                            commitMessage: recommendation.values.description,
+                          }}
+                          updatedAt={recommendation.values.price}
+                          color = {recommendation.values.color}
+                          title = {recommendation.values.title}
+                        />
+                      </Grid>
+                    );
+                  })
+                : null}
+              {/* <Grid xs={24} sm={12} md={8}>
                 <ProjectCard
                   productBrand="Zara"
                   framework="Zara Delhi"
@@ -75,7 +125,7 @@ const Page = () => {
                   }}
                   updatedAt="8d"
                 />
-              </Grid>
+              </Grid> */}
             </Grid.Container>
           </div>
         </div>

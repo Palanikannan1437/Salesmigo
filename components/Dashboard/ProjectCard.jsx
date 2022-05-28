@@ -15,7 +15,8 @@ const ProjectCard = ({
   productionHostname,
   updatedAt,
   newPurchase,
-  framework,
+  title,
+  color,
 }) => {
   const theme = useTheme();
 
@@ -46,7 +47,7 @@ const ProjectCard = ({
                   lineHeight: "1.25rem",
                 }}
               >
-                {productionHostname || `${productBrand}.vercel.app`}
+                {productionHostname || `${title}`}
               </Text>
             </div>
           </div>
@@ -69,8 +70,14 @@ const ProjectCard = ({
             font="0.875rem"
             style={{ color: theme.palette.accents_5 }}
           >
-            {updatedAt} ago
-            {newPurchase && <> via</>}
+            Rs. {updatedAt}
+            {
+              <>
+                {" "}
+                <Dot>></Dot>
+                {color}
+              </>
+            }
           </Text>
         </Card>
       </div>
