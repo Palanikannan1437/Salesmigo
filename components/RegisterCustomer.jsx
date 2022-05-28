@@ -9,6 +9,8 @@ import Button from "../components/HelperComponents/Button";
 import Input from "../components/HelperComponents/Input";
 import { media } from "../utils/media";
 import { toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const RegisterCustomer = (props) => {
   const inputNameRef = useRef();

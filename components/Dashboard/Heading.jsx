@@ -8,6 +8,7 @@ const Heading = ({ user }) => {
   const theme = useTheme();
   const router = useRouter();
   const socket = useContext(SocketContext);
+
   const customerCatered = () => {
     socket.emit("customerCatered", {
       customerUsername: user.email,
@@ -38,12 +39,18 @@ const Heading = ({ user }) => {
               <Text h2 className="headding__user-name">
                 {user.name}
               </Text>
-              <Tag className="headding__user-role" onClick={customerCatered}>
-                {user.role}
-              </Tag>
+              <Tag className="headding__user-role">{user.role}</Tag>
 
               {user.role === "Customer" ? (
                 <div className="heading__actions">
+                  <Button
+                    type="secondary"
+                    auto
+                    style={{ marginRight: "40px" }}
+                    onClick={customerCatered}
+                  >
+                    Customer Catered
+                  </Button>
                   <NextLink href="/billing" passHref>
                     <Button type="secondary" auto>
                       Add Bills
@@ -112,7 +119,10 @@ const Heading = ({ user }) => {
         }
         .heading__actions {
           margin-left: auto;
+          display: flex;
+          justify-content: space-between;
         }
+
         .heading__integration :global(.heading__integration-title) {
           color: ${theme.palette.accents_5} !important;
           font-size: 0.75rem;
@@ -136,9 +146,6 @@ const Heading = ({ user }) => {
           }
           .heading__name :global(.headding__user-name) {
             font-size: 1.5rem;
-          }
-          .heading__actions {
-            display: none !important;
           }
         }
       `}</style>

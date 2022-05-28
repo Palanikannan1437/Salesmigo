@@ -30,7 +30,7 @@ const RegisterWorker = () => {
       body: JSON.stringify(userData),
     })
       .then((response) => {
-        if ((response.status === 404)) {
+        if (response.status === 404) {
           router.push("/error-page");
         }
         return response.json();
@@ -58,7 +58,6 @@ const RegisterWorker = () => {
               />
             </InputStack>
           </InputGroup>
-
           <Button onClick={registerWorkerHandler}>Submit</Button>
         </div>
       </form>

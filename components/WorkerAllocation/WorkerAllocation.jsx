@@ -4,9 +4,13 @@ import "react-toastify/dist/ReactToastify.css";
 import { useSession } from "next-auth/react";
 import AuthContext from "../../store/auth-context";
 import RoomUsersCustomerWithChoice from "./RoomUsersCustomersWithChoice";
-import Button from "../HelperComponents/Button";
-import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
-import { media } from "../../utils/media";
+import {
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+} from "@mui/material";
 import styled from "@emotion/styled";
 
 const WorkerAllocation = ({ socket }) => {
@@ -84,11 +88,14 @@ const WorkerAllocation = ({ socket }) => {
       setCustomerRoomData(data[0]);
     });
   }, [socket]);
+
   return (
-    <div>
+    <div style={{ height: "70vh" }}>
       <ToastContainer />
       <ButtonGroup>
-        <Button onClick={sendUserData}>I can cater </Button>
+        <Button variant="contained" onClick={sendUserData}>
+          I can cater
+        </Button>
         <FormControl fullWidth>
           <InputLabel id="demo-simple-select-label">
             Number of Customers
@@ -121,18 +128,10 @@ const WorkerAllocation = ({ socket }) => {
 const ButtonGroup = styled.div`
   display: flex;
   width: 300px;
-
+  margin: auto;
   flex-direction: row;
   & > * {
     flex: 1;
-  }
-
-  ${media("<=tablet")} {
-    flex-direction: column;
-    & > *:first-child {
-      margin-right: 0rem;
-      margin-bottom: 2rem;
-    }
   }
 `;
 

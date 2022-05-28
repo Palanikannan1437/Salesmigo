@@ -5,6 +5,8 @@ import FaceDetection from "../components/FaceDetection/FaceDetection";
 import AuthContext from "../store/auth-context";
 import { SocketContext } from "../utils/socket";
 
+import 'react-toastify/dist/ReactToastify.css';
+
 const CustomerRecognitionPage = (props) => {
   const { data: session } = useSession();
   const socket = useContext(SocketContext);
@@ -71,9 +73,9 @@ const CustomerRecognitionPage = (props) => {
         {/* <button onClick={sendUserData}>Join Room</button> */}
         <button onClick={emit}>Emit</button>
         {joined && socket.connected ? (
-          <h1>Online</h1>
+          <h2>You're Online</h2>
         ) : (
-          <h1>Offline: Please try again by refreshing</h1>
+          <h2>You're Offline: Please try again by refreshing</h2>
         )}
         <FaceDetection socket={socket} />
       </>

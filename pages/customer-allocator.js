@@ -5,6 +5,8 @@ import { toast, ToastContainer } from "react-toastify";
 import CustomerAllocation from "../components/CustomerAllocation/CustomerAllocation";
 import ProgressBar from "../components/HelperComponents/ProgressBar";
 import AuthContext from "../store/auth-context";
+import 'react-toastify/dist/ReactToastify.css';
+
 
 import { SocketContext } from "../utils/socket";
 
@@ -65,9 +67,9 @@ const CustomerAllocatorPage = (props) => {
     <div>
       <ProgressBar open={isLoading} />
       {joined && socket.connected ? (
-        <h1>Online</h1>
+        <h2>You're Online</h2>
       ) : (
-        <h1>Offline : Please Retry By Refreshing</h1>
+        <h2>You're Offline : Please Retry By Refreshing</h2>
       )}
       <CustomerAllocation socket={socket} />
       <ToastContainer />
