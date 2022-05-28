@@ -11,7 +11,6 @@ import { media } from "../utils/media";
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
-
 const RegisterCustomer = (props) => {
   const inputNameRef = useRef();
   const inputEmailRef = useRef();
@@ -62,10 +61,10 @@ const RegisterCustomer = (props) => {
         <Form>
           <InputGroup>
             <InputStack>
-              <Input placeholder="Your Name" id="name" ref={inputNameRef} />
+              <Input placeholder="Customer's Name" id="name" ref={inputNameRef} />
             </InputStack>
             <InputStack>
-              <Input placeholder="Your Email" id="email" ref={inputEmailRef} />
+              <Input placeholder="Customer's Email" id="email" ref={inputEmailRef} />
             </InputStack>
           </InputGroup>
           <InputGroup>
@@ -83,7 +82,7 @@ const RegisterCustomer = (props) => {
             </InputStack>
             <InputStack>
               <Input
-                placeholder="Location"
+                placeholder="Customer's Location"
                 id="location"
                 ref={inputLocationRef}
               />
@@ -91,7 +90,7 @@ const RegisterCustomer = (props) => {
           </InputGroup>
           <InputGroup>
             <PhoneInput
-              placeholder="Enter phone number"
+              placeholder="Customer's phone number"
               value={phoneNumber}
               onChange={setPhoneNumber}
               defaultCountry="IN"

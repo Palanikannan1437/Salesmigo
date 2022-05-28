@@ -1,16 +1,22 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Avatar, Button, useTheme, Popover } from "@geist-ui/react";
 import Submenu from "./Submenu";
 import UserSettings from "./UserSettings";
 import SubmenuEmployee from "./SubmenuEmployee";
+import AuthContext from "../../store/auth-context";
 
 const MenuEmployee = () => {
   const theme = useTheme();
+  const authCtx = useContext(AuthContext);
 
   return (
     <>
       <nav className="menu-nav">
-        <h1 className="menu-nav__title">Manager&apos;s Dashboard</h1>
+        <h1 className="menu-nav__title">
+          {authCtx.designation === "Manager"
+            ? "Manager's Dashboard"
+            : "Worker's Dashboard"}
+        </h1>
         <div>
           <Popover
             content={<UserSettings />}

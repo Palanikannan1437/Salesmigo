@@ -25,7 +25,6 @@ const RegisterWorker = () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${session.idToken}`,
       },
       body: JSON.stringify(userData),
     })

@@ -53,10 +53,10 @@ const AisleEmotionDetection = () => {
   return (
     <div>
       <SectionTitle>Aisles of the Shop</SectionTitle>
-      {aisles.map((aisle) => {
+      {aisles.map((aisle, idx) => {
         return (
           <EmotionDetection
-            key={aisle._id}
+            key={aisle._id + idx}
             aisleName={aisle.aisleName}
             fashionItem={aisle.fashionItem}
             updateCustomerEmotion={updateCustomerEmotion}

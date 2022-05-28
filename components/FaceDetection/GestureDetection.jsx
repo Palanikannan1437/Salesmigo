@@ -8,6 +8,10 @@ import ProgressBar from "../HelperComponents/ProgressBar";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import OverTitle from "../PageStructureComponents/OverTitle";
 import styled from "@emotion/styled";
+import { euclideanDistance } from "../../utils/euclideanDistance";
+
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const GestureDetection = (props) => {
   const webcamRef = useRef(null);
@@ -20,6 +24,14 @@ const GestureDetection = (props) => {
 
   //maintaining state for the finger recognition net
   const [net, setNet] = useState();
+
+  const [firstReqSent, setFirstReqSent] = useState(false);
+  const [detectionDescriptor, setDetectionDescripter] = useState([]);
+  const [detection, setDetection] = useState("");
+  const [detectionGesture, setDetectionGesture] = useState(null);
+
+  const prevDetection = useRef([-1, -1]);
+  const prevGesture = useRef("");
 
   //load finger recognition models
   useEffect(() => {
@@ -43,65 +55,22 @@ const GestureDetection = (props) => {
     loadModels();
   }, []);
 
-  //function to detect hand gestures
-  const detectGestures = async (net) => {
-    try {
-      const hand = await net.estimateHands(webcamRef.current);
-
-      if (hand.length > 0) {
-        const GE = new fp.GestureEstimator([
-          fp.Gestures.VictoryGesture,
-          fp.Gestures.ThumbsUpGesture,
-          thumbsDownGesture,
-        ]);
-
-        const gesture = await GE.estimate(hand[0].landmarks, 9);
-        console.log(gesture);
-      }
-    } catch (error) {
-      console.log("gesture detection error: ", error);
-    }
+  //starting the cameras
+  const startVideo = () => {
+    setCaptureVideo(true);
+    navigator.mediaDevices
+      .getUserMedia({ video: { width: 300 } })
+      .then((stream) => {
+        let video = webcamRef.current;
+        video.srcObject = stream;
+        video.play();
+      })
+      .catch((err) => {
+        console.error("error:", err);
+      });
   };
 
-  //function to recognize the customer whose gestures we're recognizing
-  const detectFace = async () => {
-    try {
-      canvasRef.current.innerHTML = faceapi.createCanvasFromMedia(
-        webcamRef.current
-      );
-
-      const displaySize = {
-        width: 640,
-        height: 480,
-      };
-
-      const detections = await faceapi
-        .detectAllFaces(
-          webcamRef.current,
-          new faceapi.TinyFaceDetectorOptions()
-        )
-        .withFaceLandmarks()
-        .withFaceDescriptors();
-
-      console.log(detections[0].descriptor, "face detected");
-      faceapi.matchDimensions(canvasRef.current, displaySize);
-
-      const resizedDetections = faceapi.resizeResults(detections, displaySize);
-
-      canvasRef &&
-        canvasRef.current &&
-        canvasRef.current.getContext("2d").clearRect(0, 0, 640, 480);
-      canvasRef &&
-        canvasRef.current &&
-        faceapi.draw.drawDetections(canvasRef.current, resizedDetections);
-      canvasRef &&
-        canvasRef.current &&
-        faceapi.draw.drawFaceExpressions(canvasRef.current, resizedDetections);
-    } catch (err) {
-      console.log("error is:", err);
-    }
-  };
-
+  //recognizing face and detecting gestures
   useEffect(() => {
     const interval = setInterval(() => {
       if (
@@ -127,17 +96,125 @@ const GestureDetection = (props) => {
     canvasRef.current,
   ]);
 
-  const startVideo = () => {
-    setCaptureVideo(true);
-    navigator.mediaDevices
-      .getUserMedia({ video: { width: 300 } })
-      .then((stream) => {
-        let video = webcamRef.current;
-        video.srcObject = stream;
-        video.play();
+  //function to detect hand gestures
+  const detectGestures = async (net) => {
+    try {
+      const hand = await net.estimateHands(webcamRef.current);
+
+      if (hand.length > 0) {
+        const GE = new fp.GestureEstimator([
+          fp.Gestures.VictoryGesture,
+          fp.Gestures.ThumbsUpGesture,
+          thumbsDownGesture,
+        ]);
+
+        const gesture = await GE.estimate(hand[0].landmarks, 9);
+        if (gesture.gestures.length > 0) {
+          setDetectionGesture(gesture.gestures[0].name);
+        }
+      }
+    } catch (error) {
+      console.log("gesture detection error: ", error);
+    }
+  };
+  console.log("current gesture", detectionGesture);
+
+  //function to recognize the customer whose gestures we're detecting
+  const detectFace = async () => {
+    try {
+      canvasRef.current.innerHTML = faceapi.createCanvasFromMedia(
+        webcamRef.current
+      );
+
+      const displaySize = {
+        width: 640,
+        height: 480,
+      };
+
+      const detections = await faceapi
+        .detectAllFaces(
+          webcamRef.current,
+          new faceapi.TinyFaceDetectorOptions()
+        )
+        .withFaceLandmarks()
+        .withFaceDescriptors();
+
+      if (detections.length > 0) {
+        setDetectionDescripter(detections[0].descriptor);
+        setDetection(detections);
+        faceapi.matchDimensions(canvasRef.current, displaySize);
+
+        const resizedDetections = faceapi.resizeResults(
+          detections,
+          displaySize
+        );
+
+        canvasRef &&
+          canvasRef.current &&
+          canvasRef.current.getContext("2d").clearRect(0, 0, 640, 480);
+        canvasRef &&
+          canvasRef.current &&
+          faceapi.draw.drawDetections(canvasRef.current, resizedDetections);
+        canvasRef &&
+          canvasRef.current &&
+          faceapi.draw.drawFaceExpressions(
+            canvasRef.current,
+            resizedDetections
+          );
+      }
+    } catch (err) {
+      console.log("error is:", err);
+    }
+  };
+
+  useEffect(() => {
+    if (!firstReqSent && detectionGesture !== null && detection.length > 0) {
+      compareFaces(detectionDescriptor, detectionGesture);
+      setFirstReqSent(true);
+      console.log("FIRST TIME api for face detection called!");
+    } else {
+      if (
+        euclideanDistance(detectionDescriptor, prevDetection.current) > 0.45 ||
+        prevGesture.current !== detectionGesture
+      ) {
+        console.log("api for face detection called!!");
+        compareFaces(detectionDescriptor, detectionGesture);
+      }
+    }
+    prevDetection.current = detectionDescriptor;
+    prevGesture.current = detectionGesture;
+  }, [detectionDescriptor, firstReqSent, detectionGesture]);
+
+  //recognizing customer and updating their emotion if found
+  const compareFaces = (detectionDescriptor, detectionGesture) => {
+    fetch(`${process.env.NEXT_PUBLIC_SERVER}/customers/find`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ descriptor: detectionDescriptor }),
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((userData) => {
+        if (userData._label) {
+          if (userData._distance < 0.45) {
+            toast(
+              `${
+                userData._label.split(" ")[0]
+              } is currently showing - ${detectionGesture} sign`
+            );
+            props.updateCustomerGesture(
+              detectionGesture,
+              userData._label.split(" ")[1],
+              props.aisleName
+            );
+          }
+        }
       })
       .catch((err) => {
-        console.error("error:", err);
+        console.log(err);
       });
   };
 
@@ -146,8 +223,10 @@ const GestureDetection = (props) => {
     webcamRef.current.srcObject.getTracks()[0].stop();
     setCaptureVideo(false);
   };
+
   return (
     <div>
+      <ToastContainer />
       <Content>
         <OverTitle>Outside Changing Room Aisle - {props.aisleName}</OverTitle>
       </Content>
@@ -215,7 +294,6 @@ const GestureDetection = (props) => {
       ) : (
         <ProgressBar open={captureVideo} />
       )}
-      <h1 style={{ color: "black" }}>Helo {name}</h1>
     </div>
   );
 };

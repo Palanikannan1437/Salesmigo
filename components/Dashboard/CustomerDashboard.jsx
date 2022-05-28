@@ -107,20 +107,22 @@ const CustomerDashboard = () => {
                 Recent Purchases
               </Text>
 
-              {recentPurchases.length > 0
-                ? recentPurchases.map((purchase, idx) => {
-                    return (
-                      <EventListItem
-                        key={idx}
-                        username={purchase.itemId.split(/(?=[A-Z])/).join(" ")}
-                        avatar={`https://s3.us-west-2.amazonaws.com/images.unsplash.com/small/photo-1495105787522-5334e3ffa0ef`}
-                        createdAt={timeAgo(purchase.timestamp)}
-                      >
-                        {purchase.itemId.split(/(?=[A-Z])/).join(" ")}
-                      </EventListItem>
-                    );
-                  })
-                : null}
+              {recentPurchases.length > 0 ? (
+                recentPurchases.map((purchase, idx) => {
+                  return (
+                    <EventListItem
+                      key={idx}
+                      username={purchase.itemId.split(/(?=[A-Z])/).join(" ")}
+                      avatar={`https://s3.us-west-2.amazonaws.com/images.unsplash.com/small/photo-1495105787522-5334e3ffa0ef`}
+                      createdAt={timeAgo(purchase.timestamp)}
+                    >
+                      {purchase.itemId.split(/(?=[A-Z])/).join(" ")}
+                    </EventListItem>
+                  );
+                })
+              ) : (
+                <h2>No Purchases Yet</h2>
+              )}
               <NextLink href="/activity" passHref>
                 <Link className="view-all" color underline>
                   View All Activity

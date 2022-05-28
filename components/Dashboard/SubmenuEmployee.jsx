@@ -28,8 +28,6 @@ const SubmenuEmployee = () => {
                 router.push(route);
               }}
             >
-              <Tabs.Item label="Register Customer" value="/register-customer" />
-
               {authCtx.designation === "Manager" ? (
                 <Tabs.Item label="Register Worker" value="/register-worker" />
               ) : null}
@@ -43,15 +41,16 @@ const SubmenuEmployee = () => {
               ) : null}
 
               <Tabs.Item
-                label="Face Detection At Entrance"
+                label="Face-Recognition At Entrance"
                 value="/face-detection"
               />
               <Tabs.Item
-                label="Emotion Detection Aisles"
+                label="Emotion-Detection At Aisles"
                 value="/aisle-emotion-detection"
               />
+              <Tabs.Item label="Gesture-Detection" value="/gesture-detection" />
 
-              <Tabs.Item label="Gesture Detection" value="/gesture-detection" />
+              <Tabs.Item label="Register Customer" value="/register-customer" />
             </Tabs>
           </div>
         </div>

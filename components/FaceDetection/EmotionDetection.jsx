@@ -1,29 +1,31 @@
 import * as faceapi from "@vladmandic/face-api";
 import React, { useEffect, useRef, useState } from "react";
 import { euclideanDistance } from "../../utils/euclideanDistance";
-import { useSession } from "next-auth/react";
 import OverTitle from "../PageStructureComponents/OverTitle";
 import ProgressBar from "../HelperComponents/ProgressBar";
 import styled from "@emotion/styled";
 import EmojiEmotionsIcon from "@mui/icons-material/EmojiEmotions";
 
-function EmotionDetection(props) {
-  const { data: session } = useSession();
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
+function EmotionDetection(props) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [captureVideo, setCaptureVideo] = useState(false);
-  const [firstReqSent, setfirstReqSent] = useState(false);
+  const [firstReqSent, setFirstReqSent] = useState(false);
   const webcamRef = useRef();
   const canvasRef = useRef();
 
   const [detectionDescriptor, setDetectionDescripter] = useState([]);
-  const [detect, setDetection] = useState([]);
-  const [detectionExpression, setdetectionExpression] = useState([]);
+  const [detection, setDetection] = useState([]);
+  const [detectionExpression, setDetectionExpression] = useState([]);
 
   const [name, setName] = useState("");
 
   const prevDetection = useRef([-1, -1]);
+  const prevExpression = useRef("");
 
+  //loading models for face and emotion recognition
   useEffect(() => {
     const loadModels = async () => {
       await faceapi.nets.ssdMobilenetv1.loadFromUri("/models");
@@ -36,6 +38,7 @@ function EmotionDetection(props) {
     loadModels();
   }, []);
 
+  //start webcam
   const startVideo = () => {
     setCaptureVideo(true);
     navigator.mediaDevices
@@ -50,6 +53,7 @@ function EmotionDetection(props) {
       });
   };
 
+  //detecting a new face in the webcam every 100ms
   useEffect(() => {
     const interval = setInterval(() => {
       if (
@@ -65,11 +69,12 @@ function EmotionDetection(props) {
     return () => clearInterval(interval);
   }, [isLoaded]);
 
-  //find most suited expression
+  //find most suited facial expression
   const getMaxValueKey = (obj) => {
     return Object.keys(obj).reduce((a, b) => (obj[a] > obj[b] ? a : b));
   };
 
+  //detecting face descriptions and facial emotions of a customer
   const handleVideoOnPlay = async () => {
     try {
       canvasRef.current.innerHTML = faceapi.createCanvasFromMedia(
@@ -85,53 +90,70 @@ function EmotionDetection(props) {
         .detectAllFaces(webcamRef.current, new faceapi.SsdMobilenetv1Options())
         .withFaceLandmarks()
         .withFaceDescriptors()
-        .withFaceExpressions()
-        .withAgeAndGender();
+        .withFaceExpressions();
+      if (detections.length > 0) {
+        setDetectionDescripter(detections[0].descriptor);
+        setDetectionExpression(getMaxValueKey(detections[0].expressions));
+        setDetection(detections);
 
-      setDetectionDescripter(detections[0].descriptor);
-      setdetectionExpression(getMaxValueKey(detections[0].expressions));
-      setDetection(detections);
-      // console.log(detections);
+        faceapi.matchDimensions(canvasRef.current, displaySize);
+        const resizedDetections = faceapi.resizeResults(
+          detections,
+          displaySize
+        );
 
-      faceapi.matchDimensions(canvasRef.current, displaySize);
-      const resizedDetections = faceapi.resizeResults(detections, displaySize);
-
-      canvasRef &&
-        canvasRef.current &&
-        canvasRef.current.getContext("2d").clearRect(0, 0, 640, 480);
-      canvasRef &&
-        canvasRef.current &&
-        faceapi.draw.drawDetections(canvasRef.current, resizedDetections);
-      canvasRef &&
-        canvasRef.current &&
-        faceapi.draw.drawFaceExpressions(canvasRef.current, resizedDetections);
+        canvasRef &&
+          canvasRef.current &&
+          canvasRef.current.getContext("2d").clearRect(0, 0, 640, 480);
+        canvasRef &&
+          canvasRef.current &&
+          faceapi.draw.drawDetections(canvasRef.current, resizedDetections);
+        canvasRef &&
+          canvasRef.current &&
+          faceapi.draw.drawFaceExpressions(
+            canvasRef.current,
+            resizedDetections
+          );
+      }
     } catch (err) {
       console.log("error is:", err);
     }
   };
 
+  //Inorder to reduce the number of requests to our server for checking face,
+  //compare the euclidean distance between two frames' description and send
+  //request to server only if distance is greater than the threshold i.e. 0.45
+  //except the FIRST time!
   useEffect(() => {
-    if (!firstReqSent && detect.length > 0) {
+    if (!firstReqSent && detection.length > 0) {
       compareFaces(detectionDescriptor, detectionExpression);
-      setfirstReqSent(true);
-      console.log("FIRST TIME api for face detection called!!");
+      setFirstReqSent(true);
+      console.log("FIRST TIME api for face detection called!");
     } else {
       if (
-        euclideanDistance(detectionDescriptor, prevDetection.current) > 0.45
+        euclideanDistance(detectionDescriptor, prevDetection.current) > 0.45 ||
+        detectionExpression !== prevExpression.current
       ) {
         console.log("api for face detection called!!");
         compareFaces(detectionDescriptor, detectionExpression);
       }
     }
     prevDetection.current = detectionDescriptor;
+    console.log(
+      "prev expression",
+      detectionExpression,
+      prevExpression.current,
+      detectionExpression === prevExpression.current
+    );
+    prevExpression.current = detectionExpression;
   }, [detectionDescriptor, firstReqSent, detectionExpression]);
 
+  //recognizing customer and updating their emotion if found
   const compareFaces = (detectionDescriptor, detectionExpression) => {
     fetch(`${process.env.NEXT_PUBLIC_SERVER}/customers/find`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.idToken}`,
       },
       body: JSON.stringify({ descriptor: detectionDescriptor }),
     })
@@ -140,7 +162,8 @@ function EmotionDetection(props) {
       })
       .then((userData) => {
         if (userData._label) {
-          if (userData._distance < 0.5) {
+          if (userData._distance < 0.45) {
+            toast(`${userData._label} is ${detectionExpression}`);
             setName(userData._label);
             props.updateCustomerEmotion(
               detectionExpression,
@@ -163,6 +186,7 @@ function EmotionDetection(props) {
 
   return (
     <div>
+      <ToastContainer />
       <Content>
         <OverTitle>Aisle - {props.aisleName}</OverTitle>
       </Content>
