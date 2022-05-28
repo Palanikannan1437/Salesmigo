@@ -67,9 +67,9 @@ const CustomerAllocatorPage = (props) => {
     <div>
       <ProgressBar open={isLoading} />
       {joined && socket.connected ? (
-        <h2>You're Online</h2>
+        <h2>{"You're Online"}</h2>
       ) : (
-        <h2>You're Offline : Please Retry By Refreshing</h2>
+        <h2>{"You're Offline : Please Retry By Refreshing"}</h2>
       )}
       <CustomerAllocation socket={socket} />
       <ToastContainer />

@@ -74,7 +74,7 @@ const ProjectCard = ({
             {
               <>
                 {" "}
-                <Dot>></Dot>
+                <Dot>{">"}</Dot>
                 {color}
               </>
             }

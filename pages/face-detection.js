@@ -73,9 +73,9 @@ const CustomerRecognitionPage = (props) => {
         {/* <button onClick={sendUserData}>Join Room</button> */}
         <button onClick={emit}>Emit</button>
         {joined && socket.connected ? (
-          <h2>You're Online</h2>
+          <h2>{"You're Online"}</h2>
         ) : (
-          <h2>You're Offline: Please try again by refreshing</h2>
+          <h2>{"You're Offline: Please try again by refreshing"}</h2>
         )}
         <FaceDetection socket={socket} />
       </>
