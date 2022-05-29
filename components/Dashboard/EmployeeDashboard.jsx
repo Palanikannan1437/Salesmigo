@@ -25,7 +25,11 @@ const EmployeeDashboard = () => {
           user={{
             photo: `${session?.user.image}`,
             name: `${session?.user.name}`,
-            role: `${authCtx.designation}`,
+            role: `${
+              typeof window !== "undefined"
+                ? localStorage.getItem("designation")
+                : null
+            }`,
             email: `${session?.user.email}`,
           }}
         />

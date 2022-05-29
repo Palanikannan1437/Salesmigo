@@ -68,7 +68,10 @@ const WorkerAllocation = ({ socket }) => {
         socket.emit("joinRoom", {
           name: session?.user.name,
           email: session?.user.email,
-          type: authCtx.designation,
+          type:
+            typeof window !== "undefined"
+              ? localStorage.getItem("designation")
+              : "Manager",
           teamID: authCtx.teamID,
           photoUrl: session?.user.image,
         });

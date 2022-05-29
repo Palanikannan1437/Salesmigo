@@ -17,7 +17,7 @@ export default function Home(props) {
   return (
     <>
       <Head>
-        <title>Salesamigo</title>
+        <title>Salesmigo</title>
         <meta name="description" content="Improve sales using face detection" />
       </Head>
       <HomepageWrapper>

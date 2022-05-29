@@ -3,13 +3,11 @@ import { useRouter } from "next/router";
 import { Tabs, useTheme } from "@geist-ui/react";
 import Link from "next/link";
 import { Button } from "@mui/material";
-import AuthContext from "../../store/auth-context";
 
 const SubmenuEmployee = () => {
   const theme = useTheme();
   const router = useRouter();
   const [sticky, setSticky] = useState(false);
-  const authCtx = useContext(AuthContext);
 
   useEffect(() => {
     const scrollHandler = () =>
@@ -28,15 +26,18 @@ const SubmenuEmployee = () => {
                 router.push(route);
               }}
             >
-              {authCtx.designation === "Manager" ? (
+              {typeof window !== "undefined" &&
+              localStorage.getItem("designation") === "Manager" ? (
                 <Tabs.Item label="Register Worker" value="/register-worker" />
               ) : null}
 
-              {authCtx.designation === "Worker" ? (
+              {typeof window !== "undefined" &&
+              localStorage.getItem("designation") === "Worker" ? (
                 <Tabs.Item label="Your Room" value="/worker-allocations" />
               ) : null}
 
-              {authCtx.designation === "Manager" ? (
+              {typeof window !== "undefined" &&
+              localStorage.getItem("designation") === "Manager" ? (
                 <Tabs.Item label="Your Room" value="/customer-allocator" />
               ) : null}
 

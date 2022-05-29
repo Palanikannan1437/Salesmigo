@@ -17,7 +17,7 @@ export default function Hero() {
         <CustomOverTitle>
           The only Sales Solution You'll ever need
         </CustomOverTitle>
-        <Heading>Let your sales thrive with Salesamigo</Heading>
+        <Heading>Let your sales thrive with Salesmigo</Heading>
         <Description>
           Salesmigo is your key to multiplying your sales and maximizing the
           profits you make! Elevate your workforce to bring out the best in

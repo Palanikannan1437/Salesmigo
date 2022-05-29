@@ -13,7 +13,8 @@ const MenuEmployee = () => {
     <>
       <nav className="menu-nav">
         <h1 className="menu-nav__title">
-          {authCtx.designation === "Manager"
+          {typeof window !== "undefined" &&
+          localStorage.getItem("designation") === "Manager"
             ? "Manager's Dashboard"
             : "Worker's Dashboard"}
         </h1>
