@@ -1,5 +1,5 @@
 import { signIn, useSession } from "next-auth/react";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import GestureDetection from "../components/FaceDetection/GestureDetection";
 import SectionTitle from "../components/PageStructureComponents/SectionTitle";
 
@@ -11,17 +11,17 @@ const GestureRecognitionPage = (props) => {
   ]);
 
   const updateCustomerGesture = (
-    current_emotion,
+    current_gesture,
     customer_email,
     aisleName
   ) => {
-    fetch(`${process.env.NEXT_PUBLIC_SERVER}/customers/emotion`, {
+    fetch(`${process.env.NEXT_PUBLIC_SERVER}/customers/gesture`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        current_emotion,
+        current_gesture,
         customer_email,
         aisleName,
       }),
@@ -38,7 +38,7 @@ const GestureRecognitionPage = (props) => {
       .catch((err) => {
         console.log(err);
       });
-    console.log(current_emotion, customer_email, aisleName);
+    console.log(current_gesture, customer_email, aisleName);
   };
 
   useEffect(() => {
@@ -53,10 +53,10 @@ const GestureRecognitionPage = (props) => {
     return (
       <>
         <SectionTitle>Gesture Detection In The Store</SectionTitle>
-        {aisles.map((aisle) => {
+        {aisles.map((aisle, idx) => {
           return (
             <GestureDetection
-              key={aisle._id}
+              key={aisle._id + idx}
               aisleName={aisle.aisleName}
               fashionItem={aisle.fashionItem}
               updateCustomerGesture={updateCustomerGesture}

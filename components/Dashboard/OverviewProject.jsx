@@ -1,43 +1,212 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Text, Link, Card, Dot, Tag, useTheme } from "@geist-ui/react";
 
-const OverviewProject = ({ projectId, createdAt, repo }) => {
+const OverviewProject = ({
+  projectId,
+  typeOfRecommendation,
+  query,
+  hasPurchased,
+}) => {
   const theme = useTheme();
+
+  const [recommendations, setRecommendations] = useState([]);
+
+  //getting recommendations of the user based on previous purchases
+  useEffect(() => {
+    if (
+      query &&
+      (projectId === "Recommended Purchases" || projectId === "Favorite Brands and Items")
+    ) {
+      fetch(`${process.env.NEXT_PUBLIC_SERVER}/aisles/recommendations`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          emailId: query,
+          scenario: hasPurchased
+            ? "Fashion-Items-to-User"
+            : "ItemsToUserGeneral",
+        }),
+      })
+        .then((response) => {
+          if (response.status === 404) {
+            // router.push("/error-page");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          console.log(data.recommendedItems.recomms);
+          setRecommendations(data.recommendedItems.recomms);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, [query,hasPurchased]);
+
+  useEffect(() => {
+    if (query && projectId === "Recommendations Based on Reactions") {
+      fetch(
+        `${process.env.NEXT_PUBLIC_SERVER}/aisles/recommendations-emotions`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            emailId: query,
+          }),
+        }
+      )
+        .then((response) => {
+          if (response.status === 404) {
+            // router.push("/error-page");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          if (data.recommendation) {
+            setRecommendations(data.recommendation);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, [query]);
+
+  useEffect(() => {
+    if (query && projectId === "Recommendations Based on Gestures") {
+      fetch(
+        `${process.env.NEXT_PUBLIC_SERVER}/aisles/recommendations-gestures`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            emailId: query,
+          }),
+        }
+      )
+        .then((response) => {
+          if (response.status === 404) {
+            // router.push("/error-page");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          if (data.recommendation) {
+            setRecommendations(data.recommendation);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, [query]);
 
   return (
     <>
-      <div className="project__wrapper">
+      <div className="recommendation__wrapper">
         <Card className="project__card" shadow>
           <div className="project__title">
             <Text h3>{projectId}</Text>
-            <Button className="project__visit-button" height={0.8} auto>
-              Visit
-            </Button>
           </div>
           <div>
-            <Dot className="project__deployment" type="success">
-              <Link href="#">Black Shoes Nike/Addidas</Link>
-              <Tag className="project__environment-tag" type="secondary">
-                Aisle 4
-              </Tag>
-              <span className="project__created-at">{createdAt}</span>
-            </Dot>
-            <Dot className="project__deployment" type="success">
-              <Link href="#">Blue kurta Zara</Link>
-              <Tag className="project__environment-tag" type="secondary">
-                Aisle 5
-              </Tag>
-              <span className="project__created-at">{createdAt}</span>
-            </Dot>
+            {projectId === "Recommended Purchases" && recommendations.length > 0
+              ? recommendations.map((recommendation, idx) => {
+                  return (
+                    <Dot
+                      key={idx}
+                      className="project__deployment"
+                      type="success"
+                    >
+                      <Link href="#">
+                        {recommendation.id.split(/(?=[A-Z])/).join(" ")}
+                      </Link>
+                      <Tag
+                        className="project__environment-tag"
+                        type="secondary"
+                      >
+                        Aisle -{" "}
+                        {recommendation.id.split(/(?=[A-Z])/)[0].toLowerCase()}
+                      </Tag>
+                    </Dot>
+                  );
+                })
+              : null}
+
+            {projectId === "Favorite Brands and Items"
+              ? recommendations.map((recommendation, idx) => {
+                  return (
+                    <Dot
+                      key={idx}
+                      className="project__deployment"
+                      type="success"
+                    >
+                      <Link href="#">
+                        {recommendation.id.split(/(?=[A-Z])/)[0] +
+                          " " +
+                          recommendation.id.split(/(?=[A-Z])/)[
+                            recommendation.id.split(/(?=[A-Z])/).length - 1
+                          ]}
+                      </Link>
+                    </Dot>
+                  );
+                })
+              : null}
+
+            {projectId === "Recommendations Based on Reactions" &&
+            recommendations.length > 0
+              ? recommendations.map((recommendation, idx) => {
+                  return (
+                    <Dot
+                      key={idx}
+                      className="project__deployment"
+                      type="success"
+                    >
+                      <Link href="#">{recommendation.aisleName}</Link>
+                      <Tag
+                        className="project__environment-tag"
+                        type="secondary"
+                      >
+                        Aisle - {recommendation.aisleName}
+                      </Tag>
+                    </Dot>
+                  );
+                })
+              : null}
+
+            {projectId === "Recommendations Based on Gestures" &&
+            recommendations.length > 0
+              ? recommendations.map((recommendation, idx) => {
+                  return (
+                    <Dot
+                      key={idx}
+                      className="project__deployment"
+                      type="success"
+                    >
+                      <Link href="#">{recommendation.aisleName}</Link>
+                      <Tag
+                        className="project__environment-tag"
+                        type="secondary"
+                      >
+                        Aisle - {recommendation.aisleName}
+                      </Tag>
+                    </Dot>
+                  );
+                })
+              : null}
           </div>
           <Card.Footer className="project__footer">
-            {/* <Icons.GitHub size={14} /> */}
-            <Text className="project__repo">{repo}</Text>
+            <Text className="recommendation__type">{typeOfRecommendation}</Text>
           </Card.Footer>
         </Card>
       </div>
       <style jsx>{`
-        .project__wrapper :global(.project__card) {
+        .recommendation__wrapper :global(.project__card) {
           padding: 0 !important;
         }
         .project__title {
@@ -50,23 +219,23 @@ const OverviewProject = ({ projectId, createdAt, repo }) => {
         .project__title :global(h3) {
           margin: 0;
         }
-        .project__wrapper :global(.project__deployment) {
+        .recommendation__wrapper :global(.project__deployment) {
           display: flex;
           flex-direction: row;
           align-items: center;
           margin-top: ${theme.layout.gapQuarter};
         }
-        .project__wrapper :global(.project__deployment) :global(.icon) {
+        .recommendation__wrapper :global(.project__deployment) :global(.icon) {
           background-color: #50e3c2;
         }
-        .project__wrapper :global(.project__deployment) :global(.label) {
+        .recommendation__wrapper :global(.project__deployment) :global(.label) {
           display: flex;
           align-items: center;
           flex: 1;
           overflow: hidden;
           text-transform: unset;
         }
-        .project__wrapper :global(.project__deployment) :global(a) {
+        .recommendation__wrapper :global(.project__deployment) :global(a) {
           font-size: 0.875rem;
           font-weight: 500;
           display: inline-block;
@@ -74,7 +243,7 @@ const OverviewProject = ({ projectId, createdAt, repo }) => {
           white-space: nowrap;
           text-overflow: ellipsis;
         }
-        .project__wrapper :global(.project__environment-tag) {
+        .recommendation__wrapper :global(.project__environment-tag) {
           color: ${theme.palette.foreground};
           background: ${theme.palette.accents_1};
           border-color: ${theme.palette.accents_2};
@@ -85,24 +254,24 @@ const OverviewProject = ({ projectId, createdAt, repo }) => {
           font-weight: 500;
           margin-left: ${theme.layout.gapHalf};
         }
-        .project__wrapper :global(.project__created-at) {
+        .recommendation__wrapper :global(.project__created-at) {
           color: ${theme.palette.accents_4};
           font-size: 0.875rem;
           text-align: right;
           margin: 0 0 0 ${theme.layout.gapHalf};
         }
-        .project__wrapper :global(.project__footer) {
+        .recommendation__wrapper :global(.project__footer) {
           display: flex;
           align-items: center;
           font-weight: 500;
         }
-        .project__wrapper :global(.project__repo) {
+        .recommendation__wrapper :global(.recommendation__type) {
           font-size: 0.875rem;
           font-weight: 500;
           margin-left: ${theme.layout.gapQuarter};
         }
         @media (max-width: ${theme.breakpoints.xs.max}) {
-          .project__wrapper :global(.project__visit-button) {
+          .recommendation__wrapper :global(.project__visit-button) {
             display: none;
           }
         }

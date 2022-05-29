@@ -13,7 +13,7 @@ export default function Cta() {
     <CtaWrapper>
       <Container>
         <Stack>
-          <OverTitle>Lorem ipsum dolor sit amet</OverTitle>
+          <OverTitle>Contact Us</OverTitle>
           <SectionTitle>
             Have Any Queries Related to Pricing and Features?
           </SectionTitle>

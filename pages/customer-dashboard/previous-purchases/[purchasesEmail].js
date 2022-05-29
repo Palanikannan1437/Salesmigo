@@ -11,32 +11,26 @@ const Page = () => {
   const [searchQuery, setSearchQuery] = useState("");
   useEffect(() => {
     if (!router.isReady) return;
-    setSearchQuery(router.query["recommendationEmail"]);
+    setSearchQuery(router.query["purchasesEmail"]);
   }, [router.isReady]);
 
-  const [recommendations, setRecommendations] = useState([]);
+  const [recentPurchases, setRecentPurchases] = useState([]);
 
   useEffect(() => {
     if (router.isReady) {
-      fetch(`${process.env.NEXT_PUBLIC_SERVER}/aisles/recommendations`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          emailId: router.query["recommendationEmail"],
-          scenario: "Fashion-Items-to-User",
-        }),
-      })
+      fetch(
+        `${process.env.NEXT_PUBLIC_SERVER}/aisles/purchases/${router.query["purchasesEmail"]}`
+      )
         .then((response) => {
           if (response.status === 404) {
-            // router.push("/error-page");
+            // router.push("/error-page/");
           }
           return response.json();
         })
         .then((data) => {
-          console.log(data.recommendedItems.recomms);
-          setRecommendations(data.recommendedItems.recomms);
+          if (data.purchases) {
+            setRecentPurchases(data.purchases);
+          }
         })
         .catch((err) => {
           console.log(err);
@@ -52,21 +46,18 @@ const Page = () => {
         <div className="page__wrapper">
           <div className="page__content">
             <Grid.Container gap={2} marginTop={1} justify="flex-start">
-              {recommendations.length > 0
-                ? recommendations.map((recommendation, idx) => {
+              {recentPurchases.length > 0
+                ? recentPurchases.map((purchase, idx) => {
                     return (
                       <Grid xs={24} sm={12} md={8} key={idx}>
                         <ProjectCard
-                          productBrand={recommendation.id.split(/(?=[A-Z])/)[0]}
+                          productBrand={purchase.itemId.split(/(?=[A-Z])/)[0]}
                           newPurchase={{
-                            repo: recommendation.id
-                              .split(/(?=[A-Z])/)
-                              .join(" "),
-                            commitMessage: recommendation.values.description,
+                            repo: purchase.itemId.split(/(?=[A-Z])/).join(" "),
+                            commitMessage: "Random Info",
                           }}
-                          updatedAt={recommendation.values.price}
-                          color={recommendation.values.color}
-                          title={recommendation.id.split(/(?=[A-Z])/).join(" ")}
+                          color={purchase.itemId.split(/(?=[A-Z])/)[1]}
+                          title={purchase.itemId.split(/(?=[A-Z])/).join(" ")}
                         />
                       </Grid>
                     );

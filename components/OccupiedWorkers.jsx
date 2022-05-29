@@ -1,7 +1,20 @@
 import { Avatar, Paper, Stack, Tooltip } from "@mui/material";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 const OccupiedWorkers = ({ roomUsers }) => {
+  const [removedDuplicateInstances, setRemovedDuplicateInstances] =
+    useState(roomUsers);
+
+  useEffect(() => {
+    setRemovedDuplicateInstances((duplicateUsers) => {
+      return roomUsers.filter(
+        (value, index, self) =>
+          index === self.findIndex((t) => t.email === value.email)
+      );
+    });
+  }, [roomUsers]);
+
+  console.log(removedDuplicateInstances);
   return (
     <div>
       <Paper
@@ -14,7 +27,7 @@ const OccupiedWorkers = ({ roomUsers }) => {
         }}
       >
         <Stack direction="row" spacing={2}>
-          {roomUsers?.map((user, index) => {
+          {removedDuplicateInstances?.map((user, index) => {
             if (
               user.type !== "Manager" &&
               user.status === "Occupied" &&

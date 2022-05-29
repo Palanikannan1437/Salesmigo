@@ -18,16 +18,16 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
     { title: "Features", href: "/features" },
     { title: "Pricing", href: "/pricing" },
     { title: "Register Store", href: "/register-manager" },
-    { title: "Sign In", href: "/sign-up", outlined: true },
+    { title: "Sign In", href: "/api/auth/signin", outlined: true },
   ]);
 
   const [globalSession, setglobalSession] = useState(null);
   const [isGoogleLoggedIn, setIsGoogleLoggedIn] = useState(false);
 
-  const handleNavItems = (id, text) => {
+  const handleNavItems = (id, text, path) => {
     setNavItems((prevData) =>
       prevData.map((el, index) => {
-        return index === id ? { ...el, title: text } : el;
+        return index === id ? { ...el, title: text, href: path } : el;
       })
     );
   };
@@ -48,7 +48,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
 
   useEffect(() => {
     if (globalSession) {
-      handleNavItems(3, "SIGN OUT");
+      handleNavItems(3, "SIGN OUT", "/api/auth/signout");
       setNavItems((prevData) => [
         { title: "Dashboard", href: "/employee-dashboard" },
         ...prevData,
@@ -91,8 +91,6 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
         });
     }
   }, [globalSession]);
-
-  console.log("in app", globalSession, isGoogleLoggedIn);
 
   return (
     <>

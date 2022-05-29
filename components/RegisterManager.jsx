@@ -6,6 +6,8 @@ import Input from "../components/HelperComponents/Input";
 import styled from "@emotion/styled";
 import { media } from "../utils/media";
 import Button from "../components/HelperComponents/Button";
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const RegisterManager = () => {
   const router = useRouter();
@@ -31,7 +33,6 @@ const RegisterManager = () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${session.idToken}`,
       },
       body: JSON.stringify(userData),
     })

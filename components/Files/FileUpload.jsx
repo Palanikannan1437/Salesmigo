@@ -43,7 +43,7 @@ const FileUpload = (props) => {
     >
       <input {...getInputProps()} />
 
-      <h3>Upload Photos of Customer By Dragging photos to here</h3>
+      <h3>Upload any 3 Photos of the Customer By Dragging photos to here</h3>
 
       {files.map((fileWrapper, indx) => {
         return (

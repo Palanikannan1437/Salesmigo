@@ -12,10 +12,36 @@ import Heading from "./Heading";
 import { useRouter } from "next/router";
 import EventListItem from "./ActivityEvent";
 import OverviewProject from "./OverviewProject";
+import { timeAgo } from "../../utils/timeAgo";
 
 const CustomerDashboard = () => {
   const theme = useTheme();
   const router = useRouter();
+
+  const [recentPurchases, setRecentPurchases] = useState([]);
+
+  useEffect(() => {
+    if (router.isReady) {
+      fetch(
+        `${process.env.NEXT_PUBLIC_SERVER}/aisles/purchases/${router.query["customeremail"]}`
+      )
+        .then((response) => {
+          if (response.status === 404) {
+            // router.push("/error-page/");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          if (data.purchases) {
+            setRecentPurchases(data.purchases);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, [router.isReady]);
+
   useEffect(() => {
     document.documentElement.removeAttribute("style");
     document.body.removeAttribute("style");
@@ -43,21 +69,42 @@ const CustomerDashboard = () => {
         <div className="page__wrapper">
           <div className="page__content">
             <div className="projects">
-              <OverviewProject
-                projectId="Recommended Purchases"
-                repo="recommended purchases"
-                createdAt="4m"
-              />
-              <OverviewProject
-                projectId="Favorite Brands"
-                repo="brands liked by the customer"
-                createdAt="2d"
-              />
-              <OverviewProject
-                projectId="Upcoming Occasions"
-                repo="birthdays,etc"
-                createdAt="5d"
-              />
+              <div style={{ marginBottom: "30px" }}>
+                <OverviewProject
+                  hasPurchased={recentPurchases.length > 0}
+                  query={searchQuery}
+                  projectId="Recommended Purchases"
+                  typeOfRecommendation={
+                    recentPurchases.length > 0
+                      ? "Recommendations Based on User's Previous Purchases"
+                      : "Based on General Trends"
+                  }
+                />
+              </div>
+              <div style={{ marginBottom: "30px" }}>
+                <OverviewProject
+                  projectId="Recommendations Based on Reactions"
+                  repo="birthdays,etc"
+                  createdAt="5d"
+                  query={searchQuery}
+                />
+              </div>
+              <div style={{ marginBottom: "30px" }}>
+                <OverviewProject
+                  projectId="Recommendations Based on Gestures"
+                  repo="birthdays,etc"
+                  createdAt="5d"
+                  query={searchQuery}
+                />
+              </div>
+              <div style={{ marginBottom: "30px" }}>
+                <OverviewProject
+                  projectId="Favorite Brands and Items"
+                  typeOfRecommendation="Recommendations of User's Brand Favorites"
+                  query={searchQuery}
+                />
+              </div>
+
               <NextLink href="/projects" passHref>
                 <Link className="view-all" color underline>
                   View All Purchases
@@ -68,45 +115,23 @@ const CustomerDashboard = () => {
               <Text h2 className="recent-activity__title">
                 Recent Purchases
               </Text>
-              <EventListItem
-                username="palani"
-                avatar="https://s3.us-west-2.amazonaws.com/images.unsplash.com/small/photo-1497339100210-9e87df79c218"
-                createdAt="4m"
-              >
-                Black Coat from Zara
-              </EventListItem>
-              <EventListItem
-                username="dependabot"
-                avatar="https://s3.us-west-2.amazonaws.com/images.unsplash.com/small/photo-1518002171953-a080ee817e1f"
-                createdAt="2d"
-              >
-                Black Shoes from Addidas
-              </EventListItem>
-              <EventListItem
-                username="palani"
-                avatar="https://s3.us-west-2.amazonaws.com/images.unsplash.com/small/photo-1620799140408-edc6dcb6d633"
-                createdAt="3d"
-              >
-                White Top from FBB
-              </EventListItem>
-              <EventListItem
-                username="palani"
-                avatar={
-                  "https://s3.us-west-2.amazonaws.com/images.unsplash.com/small/photo-1567721571968-266680c30815"
-                }
-                createdAt="9d"
-              >
-                White Shirt from Zara
-              </EventListItem>
-              <EventListItem
-                username="palani"
-                avatar={
-                  "https://s3.us-west-2.amazonaws.com/images.unsplash.com/small/photo-1495105787522-5334e3ffa0ef"
-                }
-                createdAt="9d"
-              >
-                Blue Jacket from Zara
-              </EventListItem>
+
+              {recentPurchases.length > 0 ? (
+                recentPurchases.map((purchase, idx) => {
+                  return (
+                    <EventListItem
+                      key={idx}
+                      username={purchase.itemId.split(/(?=[A-Z])/).join(" ")}
+                      avatar={`https://s3.us-west-2.amazonaws.com/images.unsplash.com/small/photo-1495105787522-5334e3ffa0ef`}
+                      createdAt={timeAgo(purchase.timestamp)}
+                    >
+                      {purchase.itemId.split(/(?=[A-Z])/).join(" ")}
+                    </EventListItem>
+                  );
+                })
+              ) : (
+                <h2>No Purchases Yet</h2>
+              )}
               <NextLink href="/activity" passHref>
                 <Link className="view-all" color underline>
                   View All Activity
@@ -133,6 +158,7 @@ const CustomerDashboard = () => {
           .projects {
             width: 540px;
             max-width: 100%;
+            margin-bottom: 100px;
             margin-right: calc(4 * ${theme.layout.gap});
           }
           .projects :global(.project__wrapper):not(:last-of-type) {

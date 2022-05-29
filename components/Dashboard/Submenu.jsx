@@ -26,16 +26,22 @@ const Submenu = (props) => {
           <div className="submenu__inner">
             <Tabs
               onChange={(route) => {
+                if (route === "/billing") {
+                  return router.push(route);
+                }
                 router.push(`${route}/${customerEmail}`);
               }}
             >
-              <Tabs.Item label="Overview" value="/customer-dashboard/" />
+              <Tabs.Item label="Overview" value="/customer-dashboard" />
               <Tabs.Item
                 label="Recomendation"
                 value="/customer-dashboard/recommendation"
               />
-              <Tabs.Item label="Previous Purchases" value="/integrations" />
-              <Tabs.Item label="Billing" value="/Billing" />
+              <Tabs.Item
+                label="Previous Purchases"
+                value="/customer-dashboard/previous-purchases"
+              />
+              <Tabs.Item label="Billing" value="/billing" />
             </Tabs>
           </div>
         </div>

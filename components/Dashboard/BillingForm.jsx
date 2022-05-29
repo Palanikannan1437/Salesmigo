@@ -1,60 +1,42 @@
 import React, { useState, useRef, useEffect } from "react";
-import TextField from "@mui/material/TextField";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import PhoneInput from "react-phone-number-input";
 import styled from "styled-components";
-import Input from "../components/HelperComponents/Input";
-import { media } from "../utils/media";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { Button } from "@mui/material";
 
-const RegisterCustomer = (props) => {
+import Input from "../HelperComponents/Input";
+import { media } from "../../utils/media";
+import { Autocomplete, Button, TextField } from "@mui/material";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+const BillingForm = (props) => {
   const inputNameRef = useRef();
   const inputEmailRef = useRef();
   const inputLocationRef = useRef();
+  const inputItemPurchasedRef = useRef();
+  const inputPriceRef = useRef();
 
-  const [dateOfBirth, setDateOfBirth] = useState(null);
-  const [phoneNumber, setPhoneNumber] = useState(null);
+  const [itemsFromInventory, setItemsFromInventory] = useState([]);
 
-  const [isFilesUploaded, setIsFilesUploaded] = useState(false);
-  useEffect(() => {
-    let count = 0;
-    props.filesToUpload.forEach((file) => {
-      if (file.url) {
-        count++;
-      }
-    });
-    if (count === 3) {
-      setIsFilesUploaded(true);
-    } else {
-      setIsFilesUploaded(false);
-    }
-  }, [props.filesToUpload]);
-
-  const registerCustomerHandler = (event) => {
+  const addBill = (event) => {
     event.preventDefault();
     const enteredName = inputNameRef.current.value;
     const enteredEmail = inputEmailRef.current.value;
     const enteredLocation = inputLocationRef.current.value;
-    const enteredPhoneNumber = phoneNumber;
-    const customerData = {
+    const enteredProduct = inputItemPurchasedRef.current.value;
+    const enteredPrice = inputPriceRef.current.value;
+    const billData = {
       customer_name: enteredName,
-      customer_email: enteredEmail,
+      emailId: enteredEmail,
       customer_location: enteredLocation,
-      customer_phoneNumber: enteredPhoneNumber,
-      customer_dateOfBirth: dateOfBirth,
-      customer_images: props.filesToUpload,
+      itemId: enteredProduct,
+      price: enteredPrice,
     };
 
-    fetch(`${process.env.NEXT_PUBLIC_SERVER}/customers`, {
+    fetch(`${process.env.NEXT_PUBLIC_SERVER}/aisles/purchase`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(customerData),
+      body: JSON.stringify(billData),
     })
       .then((response) => {
         if (response.status === 404) {
@@ -62,18 +44,41 @@ const RegisterCustomer = (props) => {
         }
         return response.json();
       })
-      .then((customerData) => {
-        toast(customerData.status);
+      .then((status) => {
+        toast(`${status.status} ${inputItemPurchasedRef.current.value}`);
+        console.log(status);
       })
       .catch((err) => {
         console.log(err);
       });
   };
 
+  //get all FromInventory from inventory
+  useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_SERVER}/aisles/items`)
+      .then((response) => {
+        if (response.status === 404) {
+          router.push("/error-page");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setItemsFromInventory(
+          data.items.map((item) => {
+            return item.split(/(?=[A-Z])/).join(" ");
+          })
+        );
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
   return (
     <div>
       <Wrapper>
-        <Form onSubmit={registerCustomerHandler}>
+        <ToastContainer />
+        <Form onSubmit={addBill}>
           <InputGroup>
             <InputStack>
               <Input
@@ -84,6 +89,7 @@ const RegisterCustomer = (props) => {
             </InputStack>
             <InputStack>
               <Input
+                type="email"
                 placeholder="Customer's Email"
                 id="email"
                 ref={inputEmailRef}
@@ -92,42 +98,45 @@ const RegisterCustomer = (props) => {
           </InputGroup>
           <InputGroup>
             <InputStack>
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <DatePicker
-                  label="Date of Birth"
-                  value={dateOfBirth}
-                  onChange={(newValue) => {
-                    setDateOfBirth(newValue);
-                  }}
-                  renderInput={(params) => <TextField {...params} />}
-                />
-              </LocalizationProvider>
-            </InputStack>
-            <InputStack>
               <Input
                 placeholder="Customer's Location"
                 id="location"
                 ref={inputLocationRef}
               />
             </InputStack>
+            <InputStack>
+              <Input
+                type="number"
+                placeholder="Price of Product with Discount"
+                id="location"
+                ref={inputPriceRef}
+              />
+            </InputStack>
           </InputGroup>
           <InputGroup>
-            <PhoneInput
-              placeholder="Customer's phone number"
-              value={phoneNumber}
-              onChange={setPhoneNumber}
-              defaultCountry="IN"
-            />
+            <InputStack>
+              <Autocomplete
+                disablePortal
+                id="combo-box-demo"
+                options={itemsFromInventory}
+                sx={{ width: "100%" }}
+                renderInput={(params) => (
+                  <TextField
+                    inputRef={inputItemPurchasedRef}
+                    {...params}
+                    label="Select Billing Item"
+                  />
+                )}
+              />
+            </InputStack>
           </InputGroup>
           <Button
-            disabled={!isFilesUploaded}
             variant="contained"
             sx={{
               padding: "1.3rem 2.25rem",
               fontSize: " 1.2rem",
             }}
             type="submit"
-            onClick={registerCustomerHandler}
           >
             Submit
           </Button>
@@ -177,4 +186,4 @@ const InputStack = styled.div`
   }
 `;
 
-export default RegisterCustomer;
+export default BillingForm;

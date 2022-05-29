@@ -1,26 +1,25 @@
 import styled from "@emotion/styled";
-import { ToastContainer } from "react-toastify";
+import BillingForm from "../components/Dashboard/BillingForm";
 import SectionTitle from "../components/PageStructureComponents/SectionTitle";
-import RegisterManager from "../components/RegisterManager";
 import { media } from "../utils/media";
-export default function Home() {
+const Billing = () => {
   return (
-    <>
-      <ToastContainer />
-      <SectionTitle>Enter Manager and Store Details</SectionTitle>
+    <div>
+      <SectionTitle>Enter Billing Details</SectionTitle>
       <ContactContainer>
-        <RegisterManager />
+        <BillingForm />
       </ContactContainer>
-    </>
+    </div>
   );
-}
-
+};
 const ContactContainer = styled.div`
   display: flex;
   position: relative;
-  top: 40px;
+  top: 60px;
   left: 35%;
   ${media("<=tablet")} {
     flex-direction: column;
   }
 `;
+
+export default Billing;

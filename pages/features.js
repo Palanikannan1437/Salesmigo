@@ -74,7 +74,7 @@ export default function FeaturesPage() {
         {/* <YoutubeVideo url="https://www.youtube.com/watch?v=BggrpKfqh1c" /> */}
         <CustomAutofitGrid>
           {FEATURES.map((singleFeature, idx) => (
-            <BasicCard key={singleFeature.title} {...singleFeature} />
+            <BasicCard key={singleFeature.title + idx} {...singleFeature} />
           ))}
         </CustomAutofitGrid>
       </Wrapper>
