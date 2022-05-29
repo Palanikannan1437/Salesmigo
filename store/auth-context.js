@@ -21,6 +21,7 @@ export const AuthContextProvider = (props) => {
     initialmanagerID = localStorage.getItem("managerID");
     initialDesignation = localStorage.getItem("designation");
   }
+  console.log(initialTeamID)
 
   const [id, setID] = useState(initialID);
   const [userTeamID, setTeamID] = useState(initialTeamID);

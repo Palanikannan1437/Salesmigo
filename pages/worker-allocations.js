@@ -5,7 +5,7 @@ import ProgressBar from "../components/HelperComponents/ProgressBar";
 import RoomUsers from "../components/RoomUsers";
 import WorkerAllocation from "../components/WorkerAllocation/WorkerAllocation";
 import { SocketContext } from "../utils/socket";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 
 const WorkerAllocationsPage = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -31,12 +31,17 @@ const WorkerAllocationsPage = () => {
   return (
     <div>
       <ProgressBar open={isLoading} />
-      {socket.connected ? (
-        <h2>{"You're Online"}</h2>
-      ) : (
-        <h2>{"You're Offline: Please try again by refreshing"}</h2>
-      )}
       <WorkerAllocation socket={socket} />
+
+      {socket.connected ? (
+        <h2 style={{ color: "grey" ,textAlign: "center", marginTop: "20px" }}>
+          {"You're Online"}
+        </h2>
+      ) : (
+        <h2 style={{ color: "grey" ,textAlign: "center", marginTop: "20px" }}>
+          {"You're Offline: Please try again by refreshing"}
+        </h2>
+      )}
       {/* <RoomUsers roomUsers={roomData.users} /> */}
       <ToastContainer />
     </div>

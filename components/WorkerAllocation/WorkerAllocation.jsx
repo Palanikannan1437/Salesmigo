@@ -53,13 +53,17 @@ const WorkerAllocation = ({ socket }) => {
 
   //getting the team details of the user
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_SERVER}/teams/${authCtx.teamID}`)
+    fetch(
+      `${process.env.NEXT_PUBLIC_SERVER}/teams/${
+        typeof window !== "undefined" ? localStorage.getItem("teamID") : null
+      }`
+    )
       .then((response) => response.json())
       .then((data) => {
         authCtx.setTeamID(data.teamData[0]._id);
       })
       .catch((err) => console.log(err));
-  }, [authCtx.teamID]);
+  }, [typeof window]);
 
   //send data of a worker to inform others that have joined
   const sendUserData = () => {
@@ -72,7 +76,10 @@ const WorkerAllocation = ({ socket }) => {
             typeof window !== "undefined"
               ? localStorage.getItem("designation")
               : "Manager",
-          teamID: authCtx.teamID,
+          teamID:
+            typeof window !== "undefined"
+              ? localStorage.getItem("teamID")
+              : null,
           photoUrl: session?.user.image,
         });
       }
@@ -95,6 +102,11 @@ const WorkerAllocation = ({ socket }) => {
   return (
     <div style={{ height: "70vh" }}>
       <ToastContainer />
+      <div>
+        <h2 style={{  textAlign: "center" ,marginBottom:"20px", marginTop:"20px"}}>
+          {"WORKER'S ROOM"} - {session?.user.name.split(" ")[0]}
+        </h2>
+      </div>
       <ButtonGroup>
         <Button variant="contained" onClick={sendUserData}>
           I can cater

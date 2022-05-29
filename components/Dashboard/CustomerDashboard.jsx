@@ -99,7 +99,7 @@ const CustomerDashboard = () => {
               </div>
               <div style={{ marginBottom: "30px" }}>
                 <OverviewProject
-                  projectId="Favorite Brands"
+                  projectId="Favorite Brands and Items"
                   typeOfRecommendation="Recommendations of User's Brand Favorites"
                   query={searchQuery}
                 />

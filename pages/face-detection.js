@@ -5,7 +5,7 @@ import FaceDetection from "../components/FaceDetection/FaceDetection";
 import AuthContext from "../store/auth-context";
 import { SocketContext } from "../utils/socket";
 
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 
 const CustomerRecognitionPage = (props) => {
   const { data: session } = useSession();
@@ -42,11 +42,12 @@ const CustomerRecognitionPage = (props) => {
         name: session?.user.name,
         email: session?.user.email,
         type: authCtx.designation,
-        teamID: authCtx.teamID,
+        teamID:
+          typeof window !== "undefined" ? localStorage.getItem("teamID") : null,
         photoUrl: session?.user.image,
       });
     }
-  }, [session?.user.email]);
+  }, [session?.user.email, typeof window]);
 
   const totalUsers = useCallback((data) => {
     setJoined(true);
@@ -71,13 +72,15 @@ const CustomerRecognitionPage = (props) => {
     return (
       <>
         {/* <button onClick={sendUserData}>Join Room</button> */}
-        <button onClick={emit}>Emit</button>
-        {joined && socket.connected ? (
-          <h2>{"You're Online"}</h2>
-        ) : (
-          <h2>{"You're Offline: Please try again by refreshing"}</h2>
-        )}
+        {/* <button onClick={emit}>Emit</button> */}
         <FaceDetection socket={socket} />
+        {joined && socket.connected ? (
+          <h2 style={{color: "grey" , textAlign: "center", marginTop: "20px" }}>{"You're Online"}</h2>
+        ) : (
+          <h2 style={{ color: "grey" ,textAlign: "center", marginTop: "20px" }}>
+            {"You're Offline: Please try again by refreshing"}
+          </h2>
+        )}
       </>
     );
   }

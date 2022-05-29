@@ -15,7 +15,7 @@ const OverviewProject = ({
   useEffect(() => {
     if (
       query &&
-      (projectId === "Recommended Purchases" || projectId === "Favorite Brands")
+      (projectId === "Recommended Purchases" || projectId === "Favorite Brands and Items")
     ) {
       fetch(`${process.env.NEXT_PUBLIC_SERVER}/aisles/recommendations`, {
         method: "POST",
@@ -43,7 +43,7 @@ const OverviewProject = ({
           console.log(err);
         });
     }
-  }, [query]);
+  }, [query,hasPurchased]);
 
   useEffect(() => {
     if (query && projectId === "Recommendations Based on Reactions") {
@@ -138,7 +138,7 @@ const OverviewProject = ({
                 })
               : null}
 
-            {projectId === "Favorite Brands"
+            {projectId === "Favorite Brands and Items"
               ? recommendations.map((recommendation, idx) => {
                   return (
                     <Dot

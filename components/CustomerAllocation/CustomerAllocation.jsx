@@ -75,7 +75,7 @@ const CustomerAllocation = ({ socket }) => {
   }, []);
 
   const totalCustomers = useCallback((data) => {
-    console.log(data);
+    console.log("customer found", data);
     setCustomerRoomData(data);
   }, []);
   //listening to all socket events
@@ -90,17 +90,26 @@ const CustomerAllocation = ({ socket }) => {
 
   //getting the team details of the user
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_SERVER}/teams/${authCtx.teamID}`)
+    fetch(
+      `${process.env.NEXT_PUBLIC_SERVER}/teams/${
+        typeof window !== "undefined" ? localStorage.getItem("teamID") : null
+      }`
+    )
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
       });
-  }, [authCtx.teamID]);
+  }, [typeof window]);
 
   console.log(roomData);
   return (
     <div>
       <ToastContainer />
+      <div>
+        <h2 style={{ textAlign: "center", marginTop: "20px" }}>
+          {"MANAGER'S ROOM"} - {session?.user.name.split(" ")[0]}
+        </h2>
+      </div>
       <DndProvider backend={HTML5Backend}>
         <AllocationGroup>
           <AllocationSubGroup>

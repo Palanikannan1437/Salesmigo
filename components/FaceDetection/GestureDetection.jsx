@@ -51,7 +51,6 @@ const GestureDetection = (props) => {
       await faceapi.nets.faceLandmark68Net.loadFromUri("/models");
       await faceapi.nets.faceRecognitionNet.loadFromUri("/models");
       setIsLoadedFaceModel(true);
-
     };
     loadModels();
   }, []);
@@ -133,10 +132,7 @@ const GestureDetection = (props) => {
       };
 
       const detections = await faceapi
-        .detectAllFaces(
-          webcamRef.current,
-          new faceapi.SsdMobilenetv1Options()
-        )
+        .detectAllFaces(webcamRef.current, new faceapi.SsdMobilenetv1Options())
         .withFaceLandmarks()
         .withFaceDescriptors();
 
@@ -197,12 +193,12 @@ const GestureDetection = (props) => {
           if (userData._distance < 0.5) {
             toast(
               `${
-                userData._label.split(" ")[0]
+                userData._label.split("_")[0]
               } is currently showing - ${detectionGesture} sign`
             );
             props.updateCustomerGesture(
               detectionGesture,
-              userData._label.split(" ")[1],
+              userData._label.split("_")[1],
               props.aisleName
             );
           }

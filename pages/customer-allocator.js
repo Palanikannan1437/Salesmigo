@@ -5,8 +5,7 @@ import { toast, ToastContainer } from "react-toastify";
 import CustomerAllocation from "../components/CustomerAllocation/CustomerAllocation";
 import ProgressBar from "../components/HelperComponents/ProgressBar";
 import AuthContext from "../store/auth-context";
-import 'react-toastify/dist/ReactToastify.css';
-
+import "react-toastify/dist/ReactToastify.css";
 
 import { SocketContext } from "../utils/socket";
 
@@ -48,6 +47,9 @@ const CustomerAllocatorPage = (props) => {
       socket.off("roomUsers", totalUsers);
     };
   }, [socket]);
+  console.log(
+    typeof window !== "undefined" ? localStorage.getItem("teamID") : null
+  );
 
   useEffect(() => {
     if (session) {
@@ -55,23 +57,28 @@ const CustomerAllocatorPage = (props) => {
         name: session?.user.name,
         email: session?.user.email,
         type: authCtx.designation,
-        teamID: authCtx.teamID,
+        teamID:
+          typeof window !== "undefined" ? localStorage.getItem("teamID") : null,
         photoUrl: session?.user.image,
       });
     }
-  }, [session?.user.email]);
+  }, [session?.user.email, typeof window]);
 
   console.log("roomData", roomData);
 
   return (
     <div>
       <ProgressBar open={isLoading} />
-      {joined && socket.connected ? (
-        <h2>{"You're Online"}</h2>
-      ) : (
-        <h2>{"You're Offline : Please Retry By Refreshing"}</h2>
-      )}
       <CustomerAllocation socket={socket} />
+      {joined && socket.connected ? (
+        <h2 style={{ color: "grey", textAlign: "center", marginTop: "20px" }}>
+          {"You're Online"}
+        </h2>
+      ) : (
+        <h2 style={{ color: "grey", textAlign: "center", marginTop: "20px" }}>
+          {"You're Offline : Please Retry By Refreshing"}
+        </h2>
+      )}
       <ToastContainer />
     </div>
   );

@@ -56,9 +56,8 @@ const Page = () => {
                             repo: purchase.itemId.split(/(?=[A-Z])/).join(" "),
                             commitMessage: "Random Info",
                           }}
-                          updatedAt={4000}
-                          color={"Black"}
-                          title={"Random Info"}
+                          color={purchase.itemId.split(/(?=[A-Z])/)[1]}
+                          title={purchase.itemId.split(/(?=[A-Z])/).join(" ")}
                         />
                       </Grid>
                     );

@@ -65,67 +65,13 @@ const Page = () => {
                             commitMessage: recommendation.values.description,
                           }}
                           updatedAt={recommendation.values.price}
-                          color = {recommendation.values.color}
-                          title = {recommendation.values.title}
+                          color={recommendation.values.color}
+                          title={recommendation.id.split(/(?=[A-Z])/).join(" ")}
                         />
                       </Grid>
                     );
                   })
                 : null}
-              {/* <Grid xs={24} sm={12} md={8}>
-                <ProjectCard
-                  productBrand="Zara"
-                  framework="Zara Delhi"
-                  newPurchase={{
-                    repo: "palani",
-                    commitMessage: "Bump version",
-                  }}
-                  updatedAt="4m"
-                />
-              </Grid>
-              <Grid xs={24} sm={12} md={8}>
-                <ProjectCard
-                  productBrand="Nike"
-                  framework="react"
-                  productionHostname="Nike India"
-                  newPurchase={{
-                    repo: "palani",
-                    commitMessage: "Improve homepage layout on smaller screens",
-                  }}
-                  updatedAt="2d"
-                />
-              </Grid>
-              <Grid xs={24} sm={12} md={8}>
-                <ProjectCard
-                  productBrand="Levi's Mumbai"
-                  framework="other"
-                  updatedAt="5d"
-                />
-              </Grid>
-              <Grid xs={24} sm={12} md={8}>
-                <ProjectCard
-                  productBrand="Zarageist"
-                  framework="react"
-                  productionHostname="random"
-                  newPurchase={{
-                    repo: "geist-org/react",
-                    commitMessage: "chore: release v2.2.0",
-                  }}
-                  updatedAt="8d"
-                />
-              </Grid>
-              <Grid xs={24} sm={12} md={8}>
-                <ProjectCard
-                  productBrand="ZaranewPurchasehub-blog"
-                  framework="next"
-                  productionHostname="newPurchasehub.blog"
-                  newPurchase={{
-                    repo: "newPurchasehub/blog",
-                    commitMessage: "Random",
-                  }}
-                  updatedAt="8d"
-                />
-              </Grid> */}
             </Grid.Container>
           </div>
         </div>

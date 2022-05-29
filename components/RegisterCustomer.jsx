@@ -1,15 +1,15 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import TextField from "@mui/material/TextField";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import PhoneInput from "react-phone-number-input";
 import styled from "styled-components";
-import Button from "../components/HelperComponents/Button";
 import Input from "../components/HelperComponents/Input";
 import { media } from "../utils/media";
 import { toast } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
+import { Button } from "@mui/material";
 
 const RegisterCustomer = (props) => {
   const inputNameRef = useRef();
@@ -18,6 +18,21 @@ const RegisterCustomer = (props) => {
 
   const [dateOfBirth, setDateOfBirth] = useState(null);
   const [phoneNumber, setPhoneNumber] = useState(null);
+
+  const [isFilesUploaded, setIsFilesUploaded] = useState(false);
+  useEffect(() => {
+    let count = 0;
+    props.filesToUpload.forEach((file) => {
+      if (file.url) {
+        count++;
+      }
+    });
+    if (count === 3) {
+      setIsFilesUploaded(true);
+    } else {
+      setIsFilesUploaded(false);
+    }
+  }, [props.filesToUpload]);
 
   const registerCustomerHandler = (event) => {
     event.preventDefault();
@@ -48,7 +63,7 @@ const RegisterCustomer = (props) => {
         return response.json();
       })
       .then((customerData) => {
-        toast("Successfully registered");
+        toast(customerData.status);
       })
       .catch((err) => {
         console.log(err);
@@ -58,13 +73,21 @@ const RegisterCustomer = (props) => {
   return (
     <div>
       <Wrapper>
-        <Form>
+        <Form onSubmit={registerCustomerHandler}>
           <InputGroup>
             <InputStack>
-              <Input placeholder="Customer's Name" id="name" ref={inputNameRef} />
+              <Input
+                placeholder="Customer's Name"
+                id="name"
+                ref={inputNameRef}
+              />
             </InputStack>
             <InputStack>
-              <Input placeholder="Customer's Email" id="email" ref={inputEmailRef} />
+              <Input
+                placeholder="Customer's Email"
+                id="email"
+                ref={inputEmailRef}
+              />
             </InputStack>
           </InputGroup>
           <InputGroup>
@@ -96,7 +119,18 @@ const RegisterCustomer = (props) => {
               defaultCountry="IN"
             />
           </InputGroup>
-          <Button onClick={registerCustomerHandler}>Submit</Button>
+          <Button
+            disabled={!isFilesUploaded}
+            variant="contained"
+            sx={{
+              padding: "1.3rem 2.25rem",
+              fontSize: " 1.2rem",
+            }}
+            type="submit"
+            onClick={registerCustomerHandler}
+          >
+            Submit
+          </Button>
         </Form>
       </Wrapper>
     </div>

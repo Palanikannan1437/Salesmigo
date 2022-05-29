@@ -7,7 +7,15 @@ const RoomUsersCustomerWithChoice = ({ roomUsers, isCustomer }) => {
 
   return (
     <div>
-      <Paper style={{ maxHeight: "80vh", overflow: "auto", width: 85 }}>
+      <Paper
+        style={{
+          maxHeight: "80vh",
+          overflow: "auto",
+          width: 85,
+          margin: "auto",
+          marginTop: "30px",
+        }}
+      >
         <Stack direction="column" spacing={2}>
           {roomUsers?.map((user, index) => {
             if (isCustomer && user.username) {
@@ -25,7 +33,7 @@ const RoomUsersCustomerWithChoice = ({ roomUsers, isCustomer }) => {
                     variant="square"
                     onClick={() => {
                       router.push(
-                        `/customer-dashboard/${user.username.split(" ")[1]}`
+                        `/customer-dashboard/${user.username.split("_")[1]}`
                       );
                     }}
                   />

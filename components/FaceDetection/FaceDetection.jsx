@@ -2,12 +2,11 @@ import * as faceapi from "@vladmandic/face-api";
 import React, { useEffect, useRef, useState } from "react";
 import { euclideanDistance } from "../../utils/euclideanDistance";
 import { useSession } from "next-auth/react";
-import sampleComparisonDescriptor from "../../utils/Testing/sampleComparisonDescriptor";
 import ElectricBoltIcon from "@mui/icons-material/ElectricBolt";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function FaceDetection(props) {
-  const { data: session } = useSession();
-
   const [isLoaded, setIsLoaded] = useState(false);
   const [captureVideo, setCaptureVideo] = useState(false);
   const [firstReqSent, setfirstReqSent] = useState(false);
@@ -33,6 +32,7 @@ function FaceDetection(props) {
   }, []);
 
   const startVideo = () => {
+    setfirstReqSent(false);
     setCaptureVideo(true);
     navigator.mediaDevices
       .getUserMedia({ video: { width: 300 } })
@@ -108,7 +108,10 @@ function FaceDetection(props) {
       if (
         euclideanDistance(detectionDescriptor, prevDetection.current) > 0.45
       ) {
-        console.log("api for face detection called!!");
+        console.log(
+          "api for face detection called!!",
+          euclideanDistance(detectionDescriptor, prevDetection.current) > 0.45
+        );
         compareFaces(detectionDescriptor);
       }
     }
@@ -130,8 +133,9 @@ function FaceDetection(props) {
       })
       .then((userData) => {
         if (userData._distance < 0.45) {
-          setName(userData._label);
           props.socket.emit("customer", userData._label);
+          setName(userData._label);
+          toast(`${userData._label} found!`);
         }
       })
       .catch((err) => {
@@ -148,9 +152,7 @@ function FaceDetection(props) {
 
   return (
     <div>
-      <button onClick={() => compareFaces(sampleComparisonDescriptor)}>
-        Compare
-      </button>
+      <ToastContainer />
       {isLoaded ? (
         <div style={{ textAlign: "center", padding: "10px" }}>
           {captureVideo ? (
@@ -158,7 +160,7 @@ function FaceDetection(props) {
               onClick={closeWebcam}
               style={{
                 cursor: "pointer",
-                backgroundColor: "green",
+                backgroundColor: "rgb(22,115,255)",
                 color: "white",
                 padding: "15px",
                 fontSize: "25px",
@@ -212,7 +214,6 @@ function FaceDetection(props) {
       ) : (
         <></>
       )}
-      <h1 style={{ color: "black" }}>Helo {name}</h1>
     </div>
   );
 }

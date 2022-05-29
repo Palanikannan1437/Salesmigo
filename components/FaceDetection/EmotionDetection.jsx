@@ -167,7 +167,7 @@ function EmotionDetection(props) {
             setName(userData._label);
             props.updateCustomerEmotion(
               detectionExpression,
-              userData._label.split(" ")[1],
+              userData._label.split("_")[1],
               props.aisleName
             );
           }
@@ -197,7 +197,7 @@ function EmotionDetection(props) {
               onClick={closeWebcam}
               style={{
                 cursor: "pointer",
-                backgroundColor: "green",
+                backgroundColor: "rgb(22,115,255)",
                 color: "white",
                 padding: "15px",
                 fontSize: "25px",

@@ -70,7 +70,7 @@ const ProjectCard = ({
             font="0.875rem"
             style={{ color: theme.palette.accents_5 }}
           >
-            Rs. {updatedAt}
+            {updatedAt}
             {
               <>
                 {" "}
