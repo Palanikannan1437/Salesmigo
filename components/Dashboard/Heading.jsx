@@ -9,6 +9,7 @@ const Heading = ({ user }) => {
   const router = useRouter();
   const socket = useContext(SocketContext);
 
+  //handling the event when the worker caters a particular customer
   const customerCatered = () => {
     socket.emit("customerCatered", {
       customerUsername: user.email,

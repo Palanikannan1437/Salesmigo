@@ -20,8 +20,6 @@ function EmotionDetection(props) {
   const [detection, setDetection] = useState([]);
   const [detectionExpression, setDetectionExpression] = useState([]);
 
-  const [name, setName] = useState("");
-
   const prevDetection = useRef([-1, -1]);
   const prevExpression = useRef("");
 
@@ -32,7 +30,6 @@ function EmotionDetection(props) {
       await faceapi.nets.faceLandmark68Net.loadFromUri("/models");
       await faceapi.nets.faceRecognitionNet.loadFromUri("/models");
       await faceapi.nets.faceExpressionNet.loadFromUri("/models");
-      await faceapi.nets.ageGenderNet.loadFromUri("/models");
       setIsLoaded(true);
     };
     loadModels();
@@ -123,7 +120,7 @@ function EmotionDetection(props) {
   //Inorder to reduce the number of requests to our server for checking face,
   //compare the euclidean distance between two frames' description and send
   //request to server only if distance is greater than the threshold i.e. 0.45
-  //except the FIRST time!
+  //or the expression of a person changed except the FIRST time!
   useEffect(() => {
     if (!firstReqSent && detection.length > 0) {
       compareFaces(detectionDescriptor, detectionExpression);
@@ -139,12 +136,6 @@ function EmotionDetection(props) {
       }
     }
     prevDetection.current = detectionDescriptor;
-    console.log(
-      "prev expression",
-      detectionExpression,
-      prevExpression.current,
-      detectionExpression === prevExpression.current
-    );
     prevExpression.current = detectionExpression;
   }, [detectionDescriptor, firstReqSent, detectionExpression]);
 
@@ -164,7 +155,6 @@ function EmotionDetection(props) {
         if (userData._label) {
           if (userData._distance < 0.45) {
             toast(`${userData._label} is ${detectionExpression}`);
-            setName(userData._label);
             props.updateCustomerEmotion(
               detectionExpression,
               userData._label.split("_")[1],

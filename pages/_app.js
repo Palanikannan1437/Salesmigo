@@ -10,10 +10,9 @@ import { GeneralModalContextProvider } from "../store/modal-context";
 import "../styles/globals.css";
 import WaveCta from "../components/LandingPage/WaveCta";
 import Footer from "../components/LandingPage/Footer";
-import { useRouter } from "next/router";
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
-  const router = useRouter();
+  //navigation menu items
   const [navItems, setNavItems] = useState([
     { title: "Features", href: "/features" },
     { title: "Pricing", href: "/pricing" },
@@ -24,6 +23,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
   const [globalSession, setglobalSession] = useState(null);
   const [isGoogleLoggedIn, setIsGoogleLoggedIn] = useState(false);
 
+  //function to change a nav item at a particular index
   const handleNavItems = (id, text, path) => {
     setNavItems((prevData) =>
       prevData.map((el, index) => {
@@ -46,6 +46,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
     }
   }, [globalSession]);
 
+  //handling changes in the navigation bar
   useEffect(() => {
     if (globalSession) {
       handleNavItems(3, "SIGN OUT", "/api/auth/signout");
@@ -56,6 +57,8 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
     }
   }, [globalSession]);
 
+  //when globalSession is set, we verify the google jwt-token with the backend once
+  //and then login the user in
   useEffect(() => {
     if (globalSession) {
       fetch(`${process.env.NEXT_PUBLIC_SERVER}/employees/login-google`, {
@@ -65,7 +68,6 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
         }),
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${globalSession.idToken}`,
         },
         credentials: "include",
       })

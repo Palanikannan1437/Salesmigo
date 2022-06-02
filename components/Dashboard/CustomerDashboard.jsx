@@ -18,8 +18,15 @@ const CustomerDashboard = () => {
   const theme = useTheme();
   const router = useRouter();
 
-  const [recentPurchases, setRecentPurchases] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  //waiting for the url parameter to get updated(next js specific!!)
+  useEffect(() => {
+    if (!router.isReady) return;
+    setSearchQuery(router.query["customeremail"]);
+  }, [router.isReady]);
 
+  //updating recent purchases from the backend
+  const [recentPurchases, setRecentPurchases] = useState([]);
   useEffect(() => {
     if (router.isReady) {
       fetch(
@@ -46,13 +53,6 @@ const CustomerDashboard = () => {
     document.documentElement.removeAttribute("style");
     document.body.removeAttribute("style");
   }, []);
-
-  const [searchQuery, setSearchQuery] = useState("");
-
-  useEffect(() => {
-    if (!router.isReady) return;
-    setSearchQuery(router.query["customeremail"]);
-  }, [router.isReady]);
 
   return (
     <div>

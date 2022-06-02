@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useSession } from "next-auth/react";
 import AuthContext from "../../store/auth-context";
@@ -34,9 +34,24 @@ const WorkerAllocation = ({ socket }) => {
 
   const [customerRoomData, setCustomerRoomData] = useState([{ username: "" }]);
 
+  //getting the team details of the user
+  useEffect(() => {
+    fetch(
+      `${process.env.NEXT_PUBLIC_SERVER}/teams/${
+        typeof window !== "undefined" ? localStorage.getItem("teamID") : null
+      }`
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        authCtx.setTeamID(data.teamData[0]._id);
+      })
+      .catch((err) => console.log(err));
+  }, [typeof window]);
+
   const totalUsers = useCallback((data) => {
     setRoomData(data);
   }, []);
+
   const receivedCustomerData = useCallback((data) => {
     setCustomerRoomData((prevData) => [...prevData, data]);
   }, []);
@@ -51,19 +66,12 @@ const WorkerAllocation = ({ socket }) => {
     };
   }, [socket]);
 
-  //getting the team details of the user
+  //getting customers allocated to a particular worker on every render
   useEffect(() => {
-    fetch(
-      `${process.env.NEXT_PUBLIC_SERVER}/teams/${
-        typeof window !== "undefined" ? localStorage.getItem("teamID") : null
-      }`
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        authCtx.setTeamID(data.teamData[0]._id);
-      })
-      .catch((err) => console.log(err));
-  }, [typeof window]);
+    socket.on("customersOfWorker", (data) => {
+      setCustomerRoomData(data[0]);
+    });
+  }, [socket]);
 
   //send data of a worker to inform others that have joined
   const sendUserData = () => {
@@ -86,24 +94,24 @@ const WorkerAllocation = ({ socket }) => {
     }
   };
 
-  const [customerNumber, setCustomerNumber] = React.useState(0);
+  const [customerNumber, setCustomerNumber] = useState(0);
 
+  //for handling the the number of customers a worker can cater
   const handleChange = (event) => {
     setCustomerNumber(event.target.value);
   };
-
-  useEffect(() => {
-    socket.on("customersOfWorker", (data) => {
-      console.log(data);
-      setCustomerRoomData(data[0]);
-    });
-  }, [socket]);
 
   return (
     <div style={{ height: "70vh" }}>
       <ToastContainer />
       <div>
-        <h2 style={{  textAlign: "center" ,marginBottom:"20px", marginTop:"20px"}}>
+        <h2
+          style={{
+            textAlign: "center",
+            marginBottom: "20px",
+            marginTop: "20px",
+          }}
+        >
           {"WORKER'S ROOM"} - {session?.user.name.split(" ")[0]}
         </h2>
       </div>

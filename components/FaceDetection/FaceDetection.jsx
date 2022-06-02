@@ -1,8 +1,8 @@
 import * as faceapi from "@vladmandic/face-api";
 import React, { useEffect, useRef, useState } from "react";
 import { euclideanDistance } from "../../utils/euclideanDistance";
-import { useSession } from "next-auth/react";
 import ElectricBoltIcon from "@mui/icons-material/ElectricBolt";
+
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -14,23 +14,22 @@ function FaceDetection(props) {
   const canvasRef = useRef();
 
   const [detectionDescriptor, setDetectionDescripter] = useState([]);
-  const [detect, setDetection] = useState([]);
-  const [name, setName] = useState("");
+  const [detection, setDetection] = useState([]);
 
   const prevDetection = useRef([-1, -1]);
 
+  //loading models for face recognition
   useEffect(() => {
     const loadModels = async () => {
       await faceapi.nets.ssdMobilenetv1.loadFromUri("/models");
       await faceapi.nets.faceLandmark68Net.loadFromUri("/models");
       await faceapi.nets.faceRecognitionNet.loadFromUri("/models");
-      await faceapi.nets.faceExpressionNet.loadFromUri("/models");
-      await faceapi.nets.ageGenderNet.loadFromUri("/models");
       setIsLoaded(true);
     };
     loadModels();
   }, []);
 
+  //start webcam
   const startVideo = () => {
     setfirstReqSent(false);
     setCaptureVideo(true);
@@ -46,6 +45,7 @@ function FaceDetection(props) {
       });
   };
 
+  //detecting a new face in the webcam every 100ms
   useEffect(() => {
     const interval = setInterval(() => {
       if (
@@ -61,6 +61,7 @@ function FaceDetection(props) {
     return () => clearInterval(interval);
   }, [isLoaded]);
 
+  //detecting face descriptions of a customer
   const handleVideoOnPlay = async () => {
     try {
       canvasRef.current.innerHTML = faceapi.createCanvasFromMedia(
@@ -75,9 +76,7 @@ function FaceDetection(props) {
       const detections = await faceapi
         .detectAllFaces(webcamRef.current, new faceapi.SsdMobilenetv1Options())
         .withFaceLandmarks()
-        .withFaceDescriptors()
-        .withFaceExpressions()
-        .withAgeAndGender();
+        .withFaceDescriptors();
 
       setDetectionDescripter(detections[0].descriptor);
       setDetection(detections);
@@ -99,8 +98,12 @@ function FaceDetection(props) {
     }
   };
 
+  //Inorder to reduce the number of requests to our server for checking face,
+  //compare the euclidean distance between two frames' description and send
+  //request to server only if distance is greater than the threshold i.e. 0.45
+  //except the FIRST time!
   useEffect(() => {
-    if (!firstReqSent && detect.length > 0) {
+    if (!firstReqSent && detection.length > 0) {
       compareFaces(detectionDescriptor);
       setfirstReqSent(true);
       console.log("FIRST TIME api for face detection called!!");
@@ -108,10 +111,6 @@ function FaceDetection(props) {
       if (
         euclideanDistance(detectionDescriptor, prevDetection.current) > 0.45
       ) {
-        console.log(
-          "api for face detection called!!",
-          euclideanDistance(detectionDescriptor, prevDetection.current) > 0.45
-        );
         compareFaces(detectionDescriptor);
       }
     }
@@ -119,6 +118,7 @@ function FaceDetection(props) {
     prevDetection.current = detectionDescriptor;
   }, [detectionDescriptor, firstReqSent]);
 
+  //recognizing customer
   const compareFaces = (detectionDescriptor) => {
     console.log(detectionDescriptor);
     fetch(`${process.env.NEXT_PUBLIC_SERVER}/customers/find`, {
@@ -134,7 +134,6 @@ function FaceDetection(props) {
       .then((userData) => {
         if (userData._distance < 0.45) {
           props.socket.emit("customer", userData._label);
-          setName(userData._label);
           toast(`${userData._label} found!`);
         }
       })

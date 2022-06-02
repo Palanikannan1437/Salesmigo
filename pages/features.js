@@ -3,7 +3,6 @@ import AutofitGrid from "../components/PageStructureComponents/AutofitGrid";
 import BasicCard from "../components/CardComponents/BasicCard";
 import Page from "../components/PageStructureComponents/Page";
 import SectionTitle from "../components/PageStructureComponents/SectionTitle";
-// import YoutubeVideo from "components/YoutubeVideo";
 import { media } from "../utils/media";
 
 const FEATURES = [

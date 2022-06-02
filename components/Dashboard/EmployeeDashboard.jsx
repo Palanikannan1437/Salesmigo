@@ -1,14 +1,12 @@
-import React, { useContext, useEffect } from "react";
+import React, { useEffect } from "react";
 import { GeistProvider, CssBaseline, useTheme } from "@geist-ui/react";
 import Heading from "./Heading";
 import { useSession } from "next-auth/react";
-import AuthContext from "../../store/auth-context";
 import MenuEmployee from "./MenuEmployee";
 
 const EmployeeDashboard = () => {
   const theme = useTheme();
   const { data: session } = useSession();
-  const authCtx = useContext(AuthContext);
 
   useEffect(() => {
     document.documentElement.removeAttribute("style");

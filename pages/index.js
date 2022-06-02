@@ -1,6 +1,3 @@
-import { signIn, useSession } from "next-auth/react";
-import { useEffect } from "react";
-import Login from "../components/Login";
 import styled from "styled-components";
 import BasicSection from "../components/LandingPage/BasicSection";
 import Cta from "../views/HomePage/Cta";
@@ -8,12 +5,9 @@ import Features from "../views/HomePage/Features";
 import Hero from "../views/HomePage/Hero";
 import Partners from "../views/HomePage/Partners";
 import Head from "next/head";
-import Link from "next/link";
 import SectionTitle from "../components/PageStructureComponents/SectionTitle";
 
 export default function Home(props) {
-  const { data: session } = useSession();
-  
   return (
     <>
       <Head>

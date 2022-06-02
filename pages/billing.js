@@ -2,6 +2,7 @@ import styled from "@emotion/styled";
 import BillingForm from "../components/Dashboard/BillingForm";
 import SectionTitle from "../components/PageStructureComponents/SectionTitle";
 import { media } from "../utils/media";
+
 const Billing = () => {
   return (
     <div>

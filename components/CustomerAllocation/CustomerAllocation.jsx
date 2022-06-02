@@ -1,19 +1,16 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import React, { useCallback, useEffect, useState } from "react";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useSession } from "next-auth/react";
 
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import AuthContext from "../../store/auth-context";
 import RoomUsersCustomer from "../RoomUsersCustomers";
 import RoomUsers from "../RoomUsers";
-import OccupiedWorkers from "../OccupiedWorkers";
 import styled from "@emotion/styled";
-import SectionTitle from "../PageStructureComponents/SectionTitle";
+
 const CustomerAllocation = ({ socket }) => {
   const { data: session } = useSession();
-  const authCtx = useContext(AuthContext);
 
   const [allocatedCustomer, setAllocatedCustomer] = useState();
   const [allocatedWorker, setAllocatedWorker] = useState();
@@ -78,6 +75,7 @@ const CustomerAllocation = ({ socket }) => {
     console.log("customer found", data);
     setCustomerRoomData(data);
   }, []);
+
   //listening to all socket events
   useEffect(() => {
     socket.on("roomUsers", totalUsers);
@@ -101,7 +99,6 @@ const CustomerAllocation = ({ socket }) => {
       });
   }, [typeof window]);
 
-  console.log(roomData);
   return (
     <div>
       <ToastContainer />
@@ -127,7 +124,6 @@ const CustomerAllocation = ({ socket }) => {
           </AllocationSubGroup>
         </AllocationGroup>
       </DndProvider>
-      {/* <OccupiedWorkers roomUsers={roomData.users} /> */}
     </div>
   );
 };
@@ -151,7 +147,6 @@ const AllocationSubGroup = styled.div`
   margin-top: 10px;
   width: 60vw;
   height: 70vh;
-  /* border: solid black; */
   position: relative;
   left: 10%;
   margin-bottom: 10px;
