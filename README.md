@@ -1,5 +1,7 @@
 
-# Salesmigo Engage'22 ![Logo](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/th5xamgrr6se0x5ro4g6.png)
+# Salesmigo 
+
+![Logo](https://user-images.githubusercontent.com/73993394/206835228-67ffee23-09d4-40e4-9728-3d3b6f871940.png)
 
 Salesmigo project hosted on [`vercel`](https://salesmigo.vercel.app).
 
@@ -57,8 +59,6 @@ To build and run the server in production mode(Recommended)
   npm run build 
   npm run start
 ```
-
-
 
 ## Installation and Running the project
 
